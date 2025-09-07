@@ -14,10 +14,22 @@ export default defineConfig({
     },
 
     manifest: {
-      name: 'baby-tracker',
-      short_name: 'baby-tracker',
-      description: 'baby-tracker',
-      theme_color: '#ffffff',
+      name: 'BabyTrack - Track Your Baby\'s Journey',
+      short_name: 'BabyTrack',
+      description: 'Monitor your baby\'s feeding, sleeping, playing, and health activities with our beautiful and intuitive baby tracking app.',
+      theme_color: '#2563eb',
+      background_color: '#f9fafb',
+      display: 'standalone',
+      scope: '/',
+      start_url: '/',
+      categories: ['health', 'lifestyle', 'parenting'],
+      icons: [
+        {
+          src: '/favicon.svg',
+          sizes: 'any',
+          type: 'image/svg+xml'
+        }
+      ]
     },
 
     workbox: {
