@@ -1,9 +1,46 @@
 import { useState, useEffect } from 'react'
 import PWABadge from './PWABadge.tsx'
 import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion'
+import Clock from './components/Clock'
+import ActivityButton from './components/ActivityButton'
+import ActiveActivity from './components/ActiveActivity'
+import ActivityHistory from './components/ActivityHistory'
+import EditActivityModal from './components/EditActivityModal'
+import { Activity, ActivityType, ActivityConfig } from './types'
+import { useLocalStorage } from './hooks/useLocalStorage'
+
+const activityConfigs: ActivityConfig[] = [
+  {
+    type: 'feeding',
+    icon: '🍼',
+    title: 'Feeding',
+    color: 'bg-gradient-to-br from-blue-500 to-blue-600'
+  },
+  {
+    type: 'sleeping',
+    icon: '😴',
+    title: 'Sleeping',
+    color: 'bg-gradient-to-br from-purple-500 to-purple-600'
+  },
+  {
+    type: 'playing',
+    icon: '🎮',
+    title: 'Playing',
+    color: 'bg-gradient-to-br from-green-500 to-green-600'
+  },
+  {
+    type: 'health',
+    icon: '💊',
+    title: 'Health',
+    color: 'bg-gradient-to-br from-red-500 to-red-600'
+  }
+]
 
 function App() {
   const [isDark, setIsDark] = useState(false)
+  const [activeActivity, setActiveActivity] = useLocalStorage<Activity | null>('activeActivity', null)
+  const [activities, setActivities] = useLocalStorage<Activity[]>('activities', [])
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
 
   useEffect(() => {
     const isDarkMode = localStorage.getItem('darkMode') === 'true' ||
@@ -19,9 +56,64 @@ function App() {
     document.documentElement.classList.toggle('dark', newDarkMode)
   }
 
+  const startActivity = (type: ActivityType) => {
+    const newActivity: Activity = {
+      id: `${type}-${Date.now()}`,
+      type,
+      startTime: Date.now()
+    }
+    setActiveActivity(newActivity)
+  }
+
+  const stopActivity = (comments?: string) => {
+    if (activeActivity) {
+      const completedActivity: Activity = {
+        ...activeActivity,
+        endTime: Date.now(),
+        comments
+      }
+      setActivities([completedActivity, ...activities])
+      setActiveActivity(null)
+    }
+  }
+
+  const updateActiveActivityComments = (comments: string) => {
+    if (activeActivity) {
+      setActiveActivity({
+        ...activeActivity,
+        comments
+      })
+    }
+  }
+
+  const updateActiveActivityStartTime = (startTime: number) => {
+    if (activeActivity) {
+      setActiveActivity({
+        ...activeActivity,
+        startTime
+      })
+    }
+  }
+
+  const handleEditActivity = (activity: Activity) => {
+    setEditingActivity(activity)
+  }
+
+  const handleSaveActivity = (updatedActivity: Activity) => {
+    const updatedActivities = activities.map(activity =>
+      activity.id === updatedActivity.id ? updatedActivity : activity
+    )
+    setActivities(updatedActivities)
+    setEditingActivity(null)
+  }
+
+  const activeConfig = activeActivity
+    ? activityConfigs.find(c => c.type === activeActivity.type)
+    : null
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-3">
@@ -47,40 +139,57 @@ function App() {
           </button>
         </header>
 
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
-            Track Your Baby's
-            <span className="text-primary-600 dark:text-primary-400 block">Journey</span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Monitor feeding, sleeping, playing, and health activities with our beautiful and intuitive baby tracking app.
-          </p>
-        </div>
+        {/* Clock */}
+        <Clock />
 
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {[
-            { icon: '🍼', title: 'Feeding', description: 'Track feeding times and amounts' },
-            { icon: '😴', title: 'Sleep', description: 'Monitor sleep patterns and duration' },
-            { icon: '🎮', title: 'Play', description: 'Record playtime and activities' },
-            { icon: '💊', title: 'Health', description: 'Log health checkups and milestones' }
-          ].map((feature, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+        {/* Active Activity or Activity Buttons */}
+        {activeActivity && activeConfig ? (
+          <ActiveActivity
+            activity={activeActivity}
+            config={activeConfig}
+            onStop={stopActivity}
+            onUpdateComments={updateActiveActivityComments}
+            onUpdateStartTime={updateActiveActivityStartTime}
+          />
+        ) : (
+          <>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Start Tracking an Activity
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Tap an activity to start tracking
+              </p>
             </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {activityConfigs.map(config => (
+                <ActivityButton
+                  key={config.type}
+                  config={config}
+                  onClick={() => startActivity(config.type)}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
-        {/* CTA Button */}
-        <div className="text-center">
-          <button className="btn-primary text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
-            Start Tracking
-          </button>
-        </div>
+        {/* Activity History */}
+        <ActivityHistory
+          activities={activities}
+          configs={activityConfigs}
+          onEditActivity={handleEditActivity}
+        />
       </div>
+
+      {/* Edit Activity Modal */}
+      {editingActivity && (
+        <EditActivityModal
+          activity={editingActivity}
+          config={activityConfigs.find(c => c.type === editingActivity.type)!}
+          onSave={handleSaveActivity}
+          onClose={() => setEditingActivity(null)}
+        />
+      )}
 
       <PWABadge />
       <VibeKanbanWebCompanion />
