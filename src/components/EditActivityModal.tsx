@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Activity, ActivityConfig } from '../types'
+import { Activity, ActivityConfig, ActivitySubcategory } from '../types'
 
 interface EditActivityModalProps {
   activity: Activity
@@ -14,6 +14,7 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
   const [endTime, setEndTime] = useState('')
   const [endDate, setEndDate] = useState('')
   const [comments, setComments] = useState(activity.comments || '')
+  const [subcategory, setSubcategory] = useState<ActivitySubcategory | undefined>(activity.subcategory)
 
   useEffect(() => {
     const start = new Date(activity.startTime)
@@ -44,7 +45,8 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
       ...activity,
       startTime: startDateTime,
       endTime: endDateTime,
-      comments: comments.trim() || undefined
+      comments: comments.trim() || undefined,
+      subcategory
     }
 
     onSave(updatedActivity)
@@ -77,6 +79,32 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
 
           {/* Form */}
           <div className="space-y-4">
+            {/* Subcategory */}
+            {config.subcategories.length > 0 && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Subcategory
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {config.subcategories.map(sub => (
+                    <button
+                      key={sub.value}
+                      type="button"
+                      onClick={() => setSubcategory(sub.value)}
+                      className={`px-3 py-2 rounded-lg border-2 transition-all ${
+                        subcategory === sub.value
+                          ? `${config.color} border-transparent text-white`
+                          : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
+                      }`}
+                    >
+                      <span className="mr-1">{sub.icon}</span>
+                      <span className="text-sm">{sub.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Start Time */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">

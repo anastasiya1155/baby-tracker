@@ -78,11 +78,20 @@ export default function ActiveActivity({ activity, config, onStop, onUpdateComme
     setIsEditingTime(false)
   }
 
+  const getSubcategoryLabel = () => {
+    if (!activity.subcategory) return null
+    const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
+    return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
+  }
+
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8 animate-pulse-slow`}>
       <div className="text-center">
         <div className="text-6xl mb-4">{config.icon}</div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title} in Progress</h2>
+        {getSubcategoryLabel() && (
+          <p className="text-white/90 text-xl mb-2">{getSubcategoryLabel()}</p>
+        )}
 
         {/* Start Time - Clickable */}
         {!isEditingTime ? (

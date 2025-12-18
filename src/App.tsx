@@ -6,7 +6,7 @@ import ActivityButton from './components/ActivityButton'
 import ActiveActivity from './components/ActiveActivity'
 import ActivityHistory from './components/ActivityHistory'
 import EditActivityModal from './components/EditActivityModal'
-import { Activity, ActivityType, ActivityConfig } from './types'
+import { Activity, ActivityType, ActivityConfig, ActivitySubcategory } from './types'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
 const activityConfigs: ActivityConfig[] = [
@@ -14,25 +14,49 @@ const activityConfigs: ActivityConfig[] = [
     type: 'feeding',
     icon: '🍼',
     title: 'Feeding',
-    color: 'bg-gradient-to-br from-blue-500 to-blue-600'
+    color: 'bg-gradient-to-br from-blue-500 to-blue-600',
+    subcategories: [
+      { value: 'left_breast', label: 'Left Breast', icon: '👈' },
+      { value: 'right_breast', label: 'Right Breast', icon: '👉' },
+      { value: 'bottle', label: 'Bottle', icon: '🍼' },
+      { value: 'solids', label: 'Solids', icon: '🥄' }
+    ]
   },
   {
     type: 'sleeping',
     icon: '😴',
     title: 'Sleeping',
-    color: 'bg-gradient-to-br from-purple-500 to-purple-600'
+    color: 'bg-gradient-to-br from-purple-500 to-purple-600',
+    subcategories: [
+      { value: 'nap', label: 'Nap', icon: '💤' },
+      { value: 'night', label: 'Night', icon: '🌙' }
+    ]
   },
   {
     type: 'playing',
     icon: '🎮',
     title: 'Playing',
-    color: 'bg-gradient-to-br from-green-500 to-green-600'
+    color: 'bg-gradient-to-br from-green-500 to-green-600',
+    subcategories: [
+      { value: 'tummy_time', label: 'Tummy Time', icon: '🤸' },
+      { value: 'outdoors', label: 'Outdoors', icon: '🌳' },
+      { value: 'bath', label: 'Bath', icon: '🛁' },
+      { value: 'gym', label: 'Gym', icon: '🎪' }
+    ]
   },
   {
     type: 'health',
     icon: '💊',
     title: 'Health',
-    color: 'bg-gradient-to-br from-red-500 to-red-600'
+    color: 'bg-gradient-to-br from-red-500 to-red-600',
+    subcategories: [
+      { value: 'vaccination', label: 'Vaccination', icon: '💉' },
+      { value: 'weight', label: 'Weight', icon: '⚖️' },
+      { value: 'height', label: 'Height', icon: '📏' },
+      { value: 'head', label: 'Head', icon: '📐' },
+      { value: 'medicine', label: 'Medicine', icon: '💊' },
+      { value: 'sick', label: 'Sick', icon: '🤒' }
+    ]
   }
 ]
 
@@ -56,10 +80,11 @@ function App() {
     document.documentElement.classList.toggle('dark', newDarkMode)
   }
 
-  const startActivity = (type: ActivityType) => {
+  const startActivity = (type: ActivityType, subcategory?: ActivitySubcategory) => {
     const newActivity: Activity = {
       id: `${type}-${Date.now()}`,
       type,
+      subcategory,
       startTime: Date.now()
     }
     setActiveActivity(newActivity)
@@ -166,7 +191,7 @@ function App() {
                 <ActivityButton
                   key={config.type}
                   config={config}
-                  onClick={() => startActivity(config.type)}
+                  onClick={(subcategory) => startActivity(config.type, subcategory)}
                 />
               ))}
             </div>

@@ -58,6 +58,12 @@ export default function ActivityHistory({ activities, configs, onEditActivity }:
     return configs.find(c => c.type === type)
   }
 
+  const getSubcategoryLabel = (activity: Activity, config: ActivityConfig) => {
+    if (!activity.subcategory) return null
+    const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
+    return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
+  }
+
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
@@ -81,6 +87,11 @@ export default function ActivityHistory({ activities, configs, onEditActivity }:
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {config.title}
+                      {getSubcategoryLabel(activity, config) && (
+                        <span className="ml-2 text-sm font-normal">
+                          {getSubcategoryLabel(activity, config)}
+                        </span>
+                      )}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {formatDate(activity.startTime)} at {formatTime(activity.startTime)}
