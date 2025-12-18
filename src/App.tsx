@@ -51,11 +51,30 @@ const activityConfigs: ActivityConfig[] = [
     color: 'bg-gradient-to-br from-red-500 to-red-600',
     subcategories: [
       { value: 'vaccination', label: 'Vaccination', icon: '💉' },
-      { value: 'weight', label: 'Weight', icon: '⚖️' },
-      { value: 'height', label: 'Height', icon: '📏' },
-      { value: 'head', label: 'Head', icon: '📐' },
       { value: 'medicine', label: 'Medicine', icon: '💊' },
-      { value: 'sick', label: 'Sick', icon: '🤒' }
+      { value: 'sick', label: 'Sick', icon: '🤒' },
+      { value: 'temperature', label: 'Temperature', icon: '🌡️' }
+    ]
+  },
+  {
+    type: 'diaper_change',
+    icon: '🚼',
+    title: 'Diaper Change',
+    color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+    subcategories: [
+      { value: 'dirty', label: 'Dirty', icon: '💩' },
+      { value: 'wet', label: 'Wet', icon: '💧' }
+    ]
+  },
+  {
+    type: 'measurements',
+    icon: '📊',
+    title: 'Measurements',
+    color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
+    subcategories: [
+      { value: 'height', label: 'Height', icon: '📏' },
+      { value: 'weight', label: 'Weight', icon: '⚖️' },
+      { value: 'head', label: 'Head', icon: '📐' }
     ]
   }
 ]
