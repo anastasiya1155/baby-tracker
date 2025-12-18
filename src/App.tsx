@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import PWABadge from './PWABadge.tsx'
+import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion'
 
 function App() {
   const [isDark, setIsDark] = useState(false)
@@ -80,8 +81,9 @@ function App() {
           </button>
         </div>
       </div>
-      
+
       <PWABadge />
+      <VibeKanbanWebCompanion />
     </div>
   )
 }
