@@ -15,6 +15,7 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
   const [endDate, setEndDate] = useState('')
   const [comments, setComments] = useState(activity.comments || '')
   const [subcategory, setSubcategory] = useState<ActivitySubcategory | undefined>(activity.subcategory)
+  const [value, setValue] = useState(activity.value?.toString() || '')
 
   useEffect(() => {
     const start = new Date(activity.startTime)
@@ -41,16 +42,40 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
       return
     }
 
+    // Validate number input for measurements
+    if (config.inputType === 'number') {
+      const numValue = parseFloat(value)
+      if (isNaN(numValue) || numValue <= 0) {
+        alert('Please enter a valid positive number')
+        return
+      }
+    }
+
     const updatedActivity: Activity = {
       ...activity,
       startTime: startDateTime,
       endTime: endDateTime,
       comments: comments.trim() || undefined,
-      subcategory
+      subcategory,
+      value: config.inputType === 'number' && value ? parseFloat(value) : undefined
     }
 
     onSave(updatedActivity)
     onClose()
+  }
+
+  const getUnit = () => {
+    if (!subcategory) return ''
+    switch (subcategory) {
+      case 'height':
+        return 'cm'
+      case 'weight':
+        return 'kg'
+      case 'head':
+        return 'cm'
+      default:
+        return ''
+    }
   }
 
   return (
@@ -105,10 +130,33 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
               </div>
             )}
 
+            {/* Number Value (for measurements) */}
+            {config.inputType === 'number' && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Value
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    step="0.1"
+                    min="0"
+                    placeholder="Enter value"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">
+                    {getUnit()}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Start Time */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Start Time
+                {config.inputType === 'timer' ? 'Start Time' : 'Time'}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <input
@@ -127,7 +175,7 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
             </div>
 
             {/* End Time */}
-            {activity.endTime && (
+            {activity.endTime && config.inputType === 'timer' && (
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   End Time

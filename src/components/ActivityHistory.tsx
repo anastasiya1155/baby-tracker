@@ -37,8 +37,17 @@ export default function ActivityHistory({ activities, configs, onEditActivity }:
     }
   }
 
-  const formatDuration = (startTime: number, endTime?: number) => {
+  const formatDuration = (startTime: number, endTime?: number, activity?: Activity) => {
     if (!endTime) return 'In progress'
+
+    // For instant activities (diaper changes, measurements, health), don't show duration
+    if (startTime === endTime) {
+      if (activity?.value !== undefined) {
+        const unit = getUnit(activity.subcategory)
+        return `${activity.value} ${unit}`
+      }
+      return 'Instant'
+    }
 
     const seconds = Math.floor((endTime - startTime) / 1000)
     const hours = Math.floor(seconds / 3600)
@@ -51,6 +60,20 @@ export default function ActivityHistory({ activities, configs, onEditActivity }:
       return `${minutes}m ${secs}s`
     } else {
       return `${secs}s`
+    }
+  }
+
+  const getUnit = (subcategory?: string) => {
+    if (!subcategory) return ''
+    switch (subcategory) {
+      case 'height':
+        return 'cm'
+      case 'weight':
+        return 'kg'
+      case 'head':
+        return 'cm'
+      default:
+        return ''
     }
   }
 
@@ -101,9 +124,9 @@ export default function ActivityHistory({ activities, configs, onEditActivity }:
                 <div className="flex items-center space-x-3">
                   <div className="text-right">
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {formatDuration(activity.startTime, activity.endTime)}
+                      {formatDuration(activity.startTime, activity.endTime, activity)}
                     </div>
-                    {activity.endTime && (
+                    {activity.endTime && activity.startTime !== activity.endTime && (
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Ended {formatTime(activity.endTime)}
                       </p>

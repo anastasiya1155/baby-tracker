@@ -9,6 +9,8 @@ export type MeasurementsSubcategory = 'height' | 'weight' | 'head'
 
 export type ActivitySubcategory = FeedingSubcategory | SleepingSubcategory | PlayingSubcategory | HealthSubcategory | DiaperChangeSubcategory | MeasurementsSubcategory
 
+export type InputType = 'timer' | 'instant' | 'number' | 'comment'
+
 export interface Activity {
   id: string
   type: ActivityType
@@ -16,6 +18,7 @@ export interface Activity {
   startTime: number
   endTime?: number
   comments?: string
+  value?: number
 }
 
 export interface SubcategoryConfig {
@@ -30,4 +33,6 @@ export interface ActivityConfig {
   title: string
   color: string
   subcategories: SubcategoryConfig[]
+  inputType: InputType
+  unit?: string
 }

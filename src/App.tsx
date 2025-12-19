@@ -4,6 +4,9 @@ import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion'
 import Clock from './components/Clock'
 import ActivityButton from './components/ActivityButton'
 import ActiveActivity from './components/ActiveActivity'
+import InstantActivity from './components/InstantActivity'
+import NumberInputActivity from './components/NumberInputActivity'
+import CommentInputActivity from './components/CommentInputActivity'
 import ActivityHistory from './components/ActivityHistory'
 import EditActivityModal from './components/EditActivityModal'
 import { Activity, ActivityType, ActivityConfig, ActivitySubcategory } from './types'
@@ -15,6 +18,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '🍼',
     title: 'Feeding',
     color: 'bg-gradient-to-br from-blue-500 to-blue-600',
+    inputType: 'timer',
     subcategories: [
       { value: 'left_breast', label: 'Left Breast', icon: '👈' },
       { value: 'right_breast', label: 'Right Breast', icon: '👉' },
@@ -27,6 +31,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '😴',
     title: 'Sleeping',
     color: 'bg-gradient-to-br from-purple-500 to-purple-600',
+    inputType: 'timer',
     subcategories: [
       { value: 'nap', label: 'Nap', icon: '💤' },
       { value: 'night', label: 'Night', icon: '🌙' }
@@ -37,6 +42,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '🎮',
     title: 'Playing',
     color: 'bg-gradient-to-br from-green-500 to-green-600',
+    inputType: 'timer',
     subcategories: [
       { value: 'tummy_time', label: 'Tummy Time', icon: '🤸' },
       { value: 'outdoors', label: 'Outdoors', icon: '🌳' },
@@ -49,6 +55,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '💊',
     title: 'Health',
     color: 'bg-gradient-to-br from-red-500 to-red-600',
+    inputType: 'comment',
     subcategories: [
       { value: 'vaccination', label: 'Vaccination', icon: '💉' },
       { value: 'medicine', label: 'Medicine', icon: '💊' },
@@ -61,6 +68,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '🚼',
     title: 'Diaper Change',
     color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+    inputType: 'instant',
     subcategories: [
       { value: 'dirty', label: 'Dirty', icon: '💩' },
       { value: 'wet', label: 'Wet', icon: '💧' }
@@ -71,6 +79,7 @@ const activityConfigs: ActivityConfig[] = [
     icon: '📊',
     title: 'Measurements',
     color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
+    inputType: 'number',
     subcategories: [
       { value: 'height', label: 'Height', icon: '📏' },
       { value: 'weight', label: 'Weight', icon: '⚖️' },
@@ -109,16 +118,58 @@ function App() {
     setActiveActivity(newActivity)
   }
 
-  const stopActivity = (comments?: string) => {
+  const stopActivity = (comments?: string, value?: number) => {
     if (activeActivity) {
       const completedActivity: Activity = {
         ...activeActivity,
         endTime: Date.now(),
+        comments,
+        value
+      }
+      setActivities([completedActivity, ...activities])
+      setActiveActivity(null)
+    }
+  }
+
+  const saveInstantActivity = (comments?: string) => {
+    if (activeActivity) {
+      const completedActivity: Activity = {
+        ...activeActivity,
+        endTime: activeActivity.startTime,
         comments
       }
       setActivities([completedActivity, ...activities])
       setActiveActivity(null)
     }
+  }
+
+  const saveNumberActivity = (value: number, comments?: string) => {
+    if (activeActivity) {
+      const completedActivity: Activity = {
+        ...activeActivity,
+        endTime: activeActivity.startTime,
+        value,
+        comments
+      }
+      setActivities([completedActivity, ...activities])
+      setActiveActivity(null)
+    }
+  }
+
+  const saveCommentActivity = (comments: string) => {
+    if (activeActivity) {
+      const completedActivity: Activity = {
+        ...activeActivity,
+        endTime: activeActivity.startTime,
+        comments
+      }
+      setActivities([completedActivity, ...activities])
+      setActiveActivity(null)
+    }
+  }
+
+  const cancelActivity = () => {
+    setActiveActivity(null)
   }
 
   const updateActiveActivityComments = (comments: string) => {
@@ -188,13 +239,36 @@ function App() {
 
         {/* Active Activity or Activity Buttons */}
         {activeActivity && activeConfig ? (
-          <ActiveActivity
-            activity={activeActivity}
-            config={activeConfig}
-            onStop={stopActivity}
-            onUpdateComments={updateActiveActivityComments}
-            onUpdateStartTime={updateActiveActivityStartTime}
-          />
+          activeConfig.inputType === 'timer' ? (
+            <ActiveActivity
+              activity={activeActivity}
+              config={activeConfig}
+              onStop={stopActivity}
+              onUpdateComments={updateActiveActivityComments}
+              onUpdateStartTime={updateActiveActivityStartTime}
+            />
+          ) : activeConfig.inputType === 'instant' ? (
+            <InstantActivity
+              activity={activeActivity}
+              config={activeConfig}
+              onSave={saveInstantActivity}
+              onCancel={cancelActivity}
+            />
+          ) : activeConfig.inputType === 'number' ? (
+            <NumberInputActivity
+              activity={activeActivity}
+              config={activeConfig}
+              onSave={saveNumberActivity}
+              onCancel={cancelActivity}
+            />
+          ) : activeConfig.inputType === 'comment' ? (
+            <CommentInputActivity
+              activity={activeActivity}
+              config={activeConfig}
+              onSave={saveCommentActivity}
+              onCancel={cancelActivity}
+            />
+          ) : null
         ) : (
           <>
             <div className="text-center mb-6">
