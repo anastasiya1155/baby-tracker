@@ -5,7 +5,7 @@ import ActivityItem from './ActivityItem'
 interface ActivityHistoryProps {
   activities: Activity[]
   configs: ActivityConfig[]
-  onEditActivity: (activity: Activity) => void
+  onEditActivity?: (activity: Activity) => void
 }
 
 function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistoryProps) {
