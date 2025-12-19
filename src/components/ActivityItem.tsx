@@ -41,7 +41,14 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
       return 'Instant'
     }
 
-    return formatDuration(new Date(activity.startTime), new Date(activity.endTime))
+    // For timer activities with a value (like pumping), show both duration and amount
+    const durationStr = formatDuration(new Date(activity.startTime), new Date(activity.endTime))
+    if (activity.value !== undefined) {
+      const unit = getUnit(activity.subcategory)
+      return `${durationStr} • ${activity.value} ${unit}`
+    }
+
+    return durationStr
   }, [activity.startTime, activity.endTime, activity.value, activity.subcategory])
 
   const handleEdit = useCallback(() => {

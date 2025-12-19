@@ -5,7 +5,7 @@ import { formatTime } from '../utils/formatting'
 interface ActiveActivityProps {
   activity: Activity
   config: ActivityConfig
-  onStop: (comments?: string) => void
+  onStop: (comments?: string, value?: number) => void
   onUpdateComments: (comments: string) => void
   onUpdateStartTime: (startTime: number) => void
 }
@@ -13,6 +13,7 @@ interface ActiveActivityProps {
 function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateStartTime }: ActiveActivityProps) {
   const [duration, setDuration] = useState(0)
   const [comments, setComments] = useState(activity.comments || '')
+  const [amount, setAmount] = useState<string>('')
   const [isEditingTime, setIsEditingTime] = useState(false)
   const [editDate, setEditDate] = useState('')
   const [editTime, setEditTime] = useState('')
@@ -51,8 +52,9 @@ function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateSt
   }, [onUpdateComments])
 
   const handleStop = useCallback(() => {
-    onStop(comments.trim() || undefined)
-  }, [onStop, comments])
+    const amountValue = amount.trim() ? parseFloat(amount) : undefined
+    onStop(comments.trim() || undefined, amountValue)
+  }, [onStop, comments, amount])
 
   const handleTimerClick = useCallback(() => {
     const start = new Date(activity.startTime)
@@ -139,6 +141,22 @@ function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateSt
         >
           {formattedDuration}
         </button>
+
+        {/* Amount Input - Only show if config has unit */}
+        {config.unit && (
+          <div className="mb-6 max-w-md mx-auto">
+            <label className="block text-white text-sm mb-2">
+              Amount ({config.unit})
+            </label>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`Enter amount in ${config.unit}`}
+              className="w-full px-4 py-3 rounded-xl bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+            />
+          </div>
+        )}
 
         {/* Comments Input */}
         <div className="mb-6 max-w-md mx-auto">

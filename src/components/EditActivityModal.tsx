@@ -43,8 +43,8 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
       return
     }
 
-    // Validate number input for measurements
-    if (config.inputType === 'number') {
+    // Validate number input for measurements or timer activities with units (like pumping)
+    if ((config.inputType === 'number' || config.unit) && value) {
       const numValue = parseFloat(value)
       if (isNaN(numValue) || numValue <= 0) {
         alert('Please enter a valid positive number')
@@ -58,12 +58,12 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
       endTime: endDateTime,
       comments: comments.trim() || undefined,
       subcategory,
-      value: config.inputType === 'number' && value ? parseFloat(value) : undefined
+      value: (config.inputType === 'number' || config.unit) && value ? parseFloat(value) : undefined
     }
 
     onSave(updatedActivity)
     onClose()
-  }, [startDate, startTime, endDate, endTime, activity, config.inputType, value, comments, subcategory, onSave, onClose])
+  }, [startDate, startTime, endDate, endTime, activity, config.inputType, config.unit, value, comments, subcategory, onSave, onClose])
 
   const unit = useMemo(() => getUnit(subcategory), [subcategory])
 
@@ -119,11 +119,11 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
               </div>
             )}
 
-            {/* Number Value (for measurements) */}
-            {config.inputType === 'number' && (
+            {/* Number Value (for measurements and timer activities with units like pumping) */}
+            {(config.inputType === 'number' || config.unit) && (
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Value
+                  {config.unit ? `Amount (${config.unit})` : 'Value'}
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -132,12 +132,14 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
                     onChange={(e) => setValue(e.target.value)}
                     step="0.1"
                     min="0"
-                    placeholder="Enter value"
+                    placeholder={config.unit ? `Enter amount in ${config.unit}` : 'Enter value'}
                     className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">
-                    {unit}
-                  </span>
+                  {unit && (
+                    <span className="text-gray-700 dark:text-gray-300 font-semibold">
+                      {unit}
+                    </span>
+                  )}
                 </div>
               </div>
             )}

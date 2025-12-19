@@ -72,6 +72,10 @@ export function getSubcategoryLabel(subcategory?: ActivitySubcategory): string {
     height: 'Height',
     weight: 'Weight',
     head: 'Head',
+    // Pumping
+    left: 'Left',
+    right: 'Right',
+    both: 'Both',
   }
 
   return labels[subcategory] || subcategory
@@ -89,6 +93,9 @@ export function getUnit(subcategory?: ActivitySubcategory): string {
     height: 'cm',
     weight: 'kg',
     head: 'cm',
+    left: 'ml',
+    right: 'ml',
+    both: 'ml',
   }
 
   return units[subcategory] || ''

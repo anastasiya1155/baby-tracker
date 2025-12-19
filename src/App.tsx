@@ -86,6 +86,19 @@ function App() {
         { value: 'weight', label: 'Weight', icon: '⚖️' },
         { value: 'head', label: 'Head', icon: '📐' }
       ]
+    },
+    {
+      type: 'pumping',
+      icon: '🍶',
+      title: 'Pumping',
+      color: 'bg-gradient-to-br from-pink-500 to-pink-600',
+      inputType: 'timer',
+      unit: 'ml',
+      subcategories: [
+        { value: 'left', label: 'Left', icon: '👈' },
+        { value: 'right', label: 'Right', icon: '👉' },
+        { value: 'both', label: 'Both', icon: '🤝' }
+      ]
     }
   ], [])
   const [isDark, setIsDark] = useState(false)
