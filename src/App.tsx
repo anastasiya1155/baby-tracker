@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import PWABadge from './PWABadge.tsx'
 import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion'
 import Clock from './components/Clock'
-import ActivityButton from './components/ActivityButton'
+import ActivityButtonWrapper from './components/ActivityButtonWrapper'
 import ActiveActivity from './components/ActiveActivity'
 import InstantActivity from './components/InstantActivity'
 import NumberInputActivity from './components/NumberInputActivity'
@@ -12,83 +12,82 @@ import EditActivityModal from './components/EditActivityModal'
 import { Activity, ActivityType, ActivityConfig, ActivitySubcategory } from './types'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
-const activityConfigs: ActivityConfig[] = [
-  {
-    type: 'feeding',
-    icon: '🍼',
-    title: 'Feeding',
-    color: 'bg-gradient-to-br from-blue-500 to-blue-600',
-    inputType: 'timer',
-    subcategories: [
-      { value: 'left_breast', label: 'Left Breast', icon: '👈' },
-      { value: 'right_breast', label: 'Right Breast', icon: '👉' },
-      { value: 'bottle', label: 'Bottle', icon: '🍼' },
-      { value: 'solids', label: 'Solids', icon: '🥄' }
-    ]
-  },
-  {
-    type: 'sleeping',
-    icon: '😴',
-    title: 'Sleeping',
-    color: 'bg-gradient-to-br from-purple-500 to-purple-600',
-    inputType: 'timer',
-    subcategories: [
-      { value: 'nap', label: 'Nap', icon: '💤' },
-      { value: 'night', label: 'Night', icon: '🌙' }
-    ]
-  },
-  {
-    type: 'playing',
-    icon: '🎮',
-    title: 'Playing',
-    color: 'bg-gradient-to-br from-green-500 to-green-600',
-    inputType: 'timer',
-    subcategories: [
-      { value: 'tummy_time', label: 'Tummy Time', icon: '🤸' },
-      { value: 'outdoors', label: 'Outdoors', icon: '🌳' },
-      { value: 'bath', label: 'Bath', icon: '🛁' },
-      { value: 'gym', label: 'Gym', icon: '🎪' }
-    ]
-  },
-  {
-    type: 'health',
-    icon: '💊',
-    title: 'Health',
-    color: 'bg-gradient-to-br from-red-500 to-red-600',
-    inputType: 'comment',
-    subcategories: [
-      { value: 'vaccination', label: 'Vaccination', icon: '💉' },
-      { value: 'medicine', label: 'Medicine', icon: '💊' },
-      { value: 'sick', label: 'Sick', icon: '🤒' },
-      { value: 'temperature', label: 'Temperature', icon: '🌡️' }
-    ]
-  },
-  {
-    type: 'diaper_change',
-    icon: '🚼',
-    title: 'Diaper Change',
-    color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
-    inputType: 'instant',
-    subcategories: [
-      { value: 'dirty', label: 'Dirty', icon: '💩' },
-      { value: 'wet', label: 'Wet', icon: '💧' }
-    ]
-  },
-  {
-    type: 'measurements',
-    icon: '📊',
-    title: 'Measurements',
-    color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
-    inputType: 'number',
-    subcategories: [
-      { value: 'height', label: 'Height', icon: '📏' },
-      { value: 'weight', label: 'Weight', icon: '⚖️' },
-      { value: 'head', label: 'Head', icon: '📐' }
-    ]
-  }
-]
-
 function App() {
+  const activityConfigs: ActivityConfig[] = useMemo(() => [
+    {
+      type: 'feeding',
+      icon: '🍼',
+      title: 'Feeding',
+      color: 'bg-gradient-to-br from-blue-500 to-blue-600',
+      inputType: 'timer',
+      subcategories: [
+        { value: 'left_breast', label: 'Left Breast', icon: '👈' },
+        { value: 'right_breast', label: 'Right Breast', icon: '👉' },
+        { value: 'bottle', label: 'Bottle', icon: '🍼' },
+        { value: 'solids', label: 'Solids', icon: '🥄' }
+      ]
+    },
+    {
+      type: 'sleeping',
+      icon: '😴',
+      title: 'Sleeping',
+      color: 'bg-gradient-to-br from-purple-500 to-purple-600',
+      inputType: 'timer',
+      subcategories: [
+        { value: 'nap', label: 'Nap', icon: '💤' },
+        { value: 'night', label: 'Night', icon: '🌙' }
+      ]
+    },
+    {
+      type: 'playing',
+      icon: '🎮',
+      title: 'Playing',
+      color: 'bg-gradient-to-br from-green-500 to-green-600',
+      inputType: 'timer',
+      subcategories: [
+        { value: 'tummy_time', label: 'Tummy Time', icon: '🤸' },
+        { value: 'outdoors', label: 'Outdoors', icon: '🌳' },
+        { value: 'bath', label: 'Bath', icon: '🛁' },
+        { value: 'gym', label: 'Gym', icon: '🎪' }
+      ]
+    },
+    {
+      type: 'health',
+      icon: '💊',
+      title: 'Health',
+      color: 'bg-gradient-to-br from-red-500 to-red-600',
+      inputType: 'comment',
+      subcategories: [
+        { value: 'vaccination', label: 'Vaccination', icon: '💉' },
+        { value: 'medicine', label: 'Medicine', icon: '💊' },
+        { value: 'sick', label: 'Sick', icon: '🤒' },
+        { value: 'temperature', label: 'Temperature', icon: '🌡️' }
+      ]
+    },
+    {
+      type: 'diaper_change',
+      icon: '🚼',
+      title: 'Diaper Change',
+      color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+      inputType: 'instant',
+      subcategories: [
+        { value: 'dirty', label: 'Dirty', icon: '💩' },
+        { value: 'wet', label: 'Wet', icon: '💧' }
+      ]
+    },
+    {
+      type: 'measurements',
+      icon: '📊',
+      title: 'Measurements',
+      color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
+      inputType: 'number',
+      subcategories: [
+        { value: 'height', label: 'Height', icon: '📏' },
+        { value: 'weight', label: 'Weight', icon: '⚖️' },
+        { value: 'head', label: 'Head', icon: '📐' }
+      ]
+    }
+  ], [])
   const [isDark, setIsDark] = useState(false)
   const [activeActivity, setActiveActivity] = useLocalStorage<Activity | null>('activeActivity', null)
   const [activities, setActivities] = useLocalStorage<Activity[]>('activities', [])
@@ -101,14 +100,14 @@ function App() {
     document.documentElement.classList.toggle('dark', isDarkMode)
   }, [])
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = useCallback(() => {
     const newDarkMode = !isDark
     setIsDark(newDarkMode)
     localStorage.setItem('darkMode', newDarkMode.toString())
     document.documentElement.classList.toggle('dark', newDarkMode)
-  }
+  }, [isDark])
 
-  const startActivity = (type: ActivityType, subcategory?: ActivitySubcategory) => {
+  const startActivity = useCallback((type: ActivityType, subcategory?: ActivitySubcategory) => {
     const newActivity: Activity = {
       id: `${type}-${Date.now()}`,
       type,
@@ -116,9 +115,9 @@ function App() {
       startTime: Date.now()
     }
     setActiveActivity(newActivity)
-  }
+  }, [setActiveActivity])
 
-  const stopActivity = (comments?: string, value?: number) => {
+  const stopActivity = useCallback((comments?: string, value?: number) => {
     if (activeActivity) {
       const completedActivity: Activity = {
         ...activeActivity,
@@ -129,9 +128,9 @@ function App() {
       setActivities([completedActivity, ...activities])
       setActiveActivity(null)
     }
-  }
+  }, [activeActivity, activities, setActiveActivity, setActivities])
 
-  const saveInstantActivity = (comments?: string) => {
+  const saveInstantActivity = useCallback((comments?: string) => {
     if (activeActivity) {
       const completedActivity: Activity = {
         ...activeActivity,
@@ -141,9 +140,9 @@ function App() {
       setActivities([completedActivity, ...activities])
       setActiveActivity(null)
     }
-  }
+  }, [activeActivity, activities, setActiveActivity, setActivities])
 
-  const saveNumberActivity = (value: number, comments?: string) => {
+  const saveNumberActivity = useCallback((value: number, comments?: string) => {
     if (activeActivity) {
       const completedActivity: Activity = {
         ...activeActivity,
@@ -154,9 +153,9 @@ function App() {
       setActivities([completedActivity, ...activities])
       setActiveActivity(null)
     }
-  }
+  }, [activeActivity, activities, setActiveActivity, setActivities])
 
-  const saveCommentActivity = (comments: string) => {
+  const saveCommentActivity = useCallback((comments: string) => {
     if (activeActivity) {
       const completedActivity: Activity = {
         ...activeActivity,
@@ -166,45 +165,55 @@ function App() {
       setActivities([completedActivity, ...activities])
       setActiveActivity(null)
     }
-  }
+  }, [activeActivity, activities, setActiveActivity, setActivities])
 
-  const cancelActivity = () => {
+  const cancelActivity = useCallback(() => {
     setActiveActivity(null)
-  }
+  }, [setActiveActivity])
 
-  const updateActiveActivityComments = (comments: string) => {
+  const updateActiveActivityComments = useCallback((comments: string) => {
     if (activeActivity) {
       setActiveActivity({
         ...activeActivity,
         comments
       })
     }
-  }
+  }, [activeActivity, setActiveActivity])
 
-  const updateActiveActivityStartTime = (startTime: number) => {
+  const updateActiveActivityStartTime = useCallback((startTime: number) => {
     if (activeActivity) {
       setActiveActivity({
         ...activeActivity,
         startTime
       })
     }
-  }
+  }, [activeActivity, setActiveActivity])
 
-  const handleEditActivity = (activity: Activity) => {
+  const handleEditActivity = useCallback((activity: Activity) => {
     setEditingActivity(activity)
-  }
+  }, [])
 
-  const handleSaveActivity = (updatedActivity: Activity) => {
+  const handleSaveActivity = useCallback((updatedActivity: Activity) => {
     const updatedActivities = activities.map(activity =>
       activity.id === updatedActivity.id ? updatedActivity : activity
     )
     setActivities(updatedActivities)
     setEditingActivity(null)
-  }
+  }, [activities, setActivities])
 
-  const activeConfig = activeActivity
-    ? activityConfigs.find(c => c.type === activeActivity.type)
-    : null
+  const handleCloseModal = useCallback(() => {
+    setEditingActivity(null)
+  }, [])
+
+  const activeConfig = useMemo(
+    () => activeActivity ? activityConfigs.find(c => c.type === activeActivity.type) : null,
+    [activeActivity, activityConfigs]
+  )
+
+  const editingConfig = useMemo(
+    () => editingActivity ? activityConfigs.find(c => c.type === editingActivity.type) : null,
+    [editingActivity, activityConfigs]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900">
@@ -281,10 +290,10 @@ function App() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {activityConfigs.map(config => (
-                <ActivityButton
+                <ActivityButtonWrapper
                   key={config.type}
                   config={config}
-                  onClick={(subcategory) => startActivity(config.type, subcategory)}
+                  onStartActivity={startActivity}
                 />
               ))}
             </div>
@@ -300,12 +309,12 @@ function App() {
       </div>
 
       {/* Edit Activity Modal */}
-      {editingActivity && (
+      {editingActivity && editingConfig && (
         <EditActivityModal
           activity={editingActivity}
-          config={activityConfigs.find(c => c.type === editingActivity.type)!}
+          config={editingConfig}
           onSave={handleSaveActivity}
-          onClose={() => setEditingActivity(null)}
+          onClose={handleCloseModal}
         />
       )}
 

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import { Activity, ActivityConfig, ActivitySubcategory } from '../types'
+import { getUnit } from '../utils/formatting'
 
 interface EditActivityModalProps {
   activity: Activity
@@ -8,7 +9,7 @@ interface EditActivityModalProps {
   onClose: () => void
 }
 
-export default function EditActivityModal({ activity, config, onSave, onClose }: EditActivityModalProps) {
+function EditActivityModal({ activity, config, onSave, onClose }: EditActivityModalProps) {
   const [startTime, setStartTime] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endTime, setEndTime] = useState('')
@@ -29,7 +30,7 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
     }
   }, [activity])
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const startDateTime = new Date(`${startDate}T${startTime}`).getTime()
     let endDateTime: number | undefined
 
@@ -62,21 +63,9 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
 
     onSave(updatedActivity)
     onClose()
-  }
+  }, [startDate, startTime, endDate, endTime, activity, config.inputType, value, comments, subcategory, onSave, onClose])
 
-  const getUnit = () => {
-    if (!subcategory) return ''
-    switch (subcategory) {
-      case 'height':
-        return 'cm'
-      case 'weight':
-        return 'kg'
-      case 'head':
-        return 'cm'
-      default:
-        return ''
-    }
-  }
+  const unit = useMemo(() => getUnit(subcategory), [subcategory])
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -147,7 +136,7 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
                     className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   <span className="text-gray-700 dark:text-gray-300 font-semibold">
-                    {getUnit()}
+                    {unit}
                   </span>
                 </div>
               </div>
@@ -232,3 +221,5 @@ export default function EditActivityModal({ activity, config, onSave, onClose }:
     </div>
   )
 }
+
+export default memo(EditActivityModal)

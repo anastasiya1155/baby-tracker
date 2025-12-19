@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, memo, useCallback, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
+import { formatTime, getUnit } from '../utils/formatting'
 
 interface NumberInputActivityProps {
   activity: Activity
@@ -8,57 +9,43 @@ interface NumberInputActivityProps {
   onCancel: () => void
 }
 
-export default function NumberInputActivity({ activity, config, onSave, onCancel }: NumberInputActivityProps) {
+function NumberInputActivity({ activity, config, onSave, onCancel }: NumberInputActivityProps) {
   const [value, setValue] = useState('')
   const [comments, setComments] = useState('')
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const numValue = parseFloat(value)
     if (isNaN(numValue) || numValue <= 0) {
       alert('Please enter a valid positive number')
       return
     }
     onSave(numValue, comments.trim() || undefined)
-  }
+  }, [value, comments, onSave])
 
-  const getSubcategoryLabel = () => {
+  const subcategoryLabel = useMemo(() => {
     if (!activity.subcategory) return null
     const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
     return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
-  }
+  }, [activity.subcategory, config.subcategories])
 
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    })
-  }
+  const formattedTime = useMemo(() => {
+    return formatTime(new Date(activity.startTime))
+  }, [activity.startTime])
 
-  const getUnit = () => {
-    if (!activity.subcategory) return ''
-    switch (activity.subcategory) {
-      case 'height':
-        return 'cm'
-      case 'weight':
-        return 'kg'
-      case 'head':
-        return 'cm'
-      default:
-        return ''
-    }
-  }
+  const unit = useMemo(() => {
+    return getUnit(activity.subcategory)
+  }, [activity.subcategory])
 
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8`}>
       <div className="text-center">
         <div className="text-6xl mb-4">{config.icon}</div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title}</h2>
-        {getSubcategoryLabel() && (
-          <p className="text-white/90 text-xl mb-2">{getSubcategoryLabel()}</p>
+        {subcategoryLabel && (
+          <p className="text-white/90 text-xl mb-2">{subcategoryLabel}</p>
         )}
         <p className="text-white/80 mb-6">
-          at {formatTime(activity.startTime)}
+          at {formattedTime}
         </p>
 
         {/* Number Input */}
@@ -74,7 +61,7 @@ export default function NumberInputActivity({ activity, config, onSave, onCancel
               className="w-40 px-4 py-3 rounded-xl bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white text-2xl font-bold text-center placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
               autoFocus
             />
-            <span className="text-2xl font-bold text-white">{getUnit()}</span>
+            <span className="text-2xl font-bold text-white">{unit}</span>
           </div>
         </div>
 
@@ -107,3 +94,5 @@ export default function NumberInputActivity({ activity, config, onSave, onCancel
     </div>
   )
 }
+
+export default memo(NumberInputActivity)

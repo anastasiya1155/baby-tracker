@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, memo, useCallback, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
+import { formatTime } from '../utils/formatting'
 
 interface CommentInputActivityProps {
   activity: Activity
@@ -8,32 +9,28 @@ interface CommentInputActivityProps {
   onCancel: () => void
 }
 
-export default function CommentInputActivity({ activity, config, onSave, onCancel }: CommentInputActivityProps) {
+function CommentInputActivity({ activity, config, onSave, onCancel }: CommentInputActivityProps) {
   const [comments, setComments] = useState('')
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (!comments.trim()) {
       alert('Please add a comment')
       return
     }
     onSave(comments.trim())
-  }
+  }, [comments, onSave])
 
-  const getSubcategoryLabel = () => {
+  const subcategoryLabel = useMemo(() => {
     if (!activity.subcategory) return null
     const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
     return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
-  }
+  }, [activity.subcategory, config.subcategories])
 
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    })
-  }
+  const formattedTime = useMemo(() => {
+    return formatTime(new Date(activity.startTime))
+  }, [activity.startTime])
 
-  const getPlaceholder = () => {
+  const placeholder = useMemo(() => {
     if (!activity.subcategory) return 'Add details...'
     switch (activity.subcategory) {
       case 'vaccination':
@@ -47,18 +44,18 @@ export default function CommentInputActivity({ activity, config, onSave, onCance
       default:
         return 'Add details...'
     }
-  }
+  }, [activity.subcategory])
 
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8`}>
       <div className="text-center">
         <div className="text-6xl mb-4">{config.icon}</div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title}</h2>
-        {getSubcategoryLabel() && (
-          <p className="text-white/90 text-xl mb-2">{getSubcategoryLabel()}</p>
+        {subcategoryLabel && (
+          <p className="text-white/90 text-xl mb-2">{subcategoryLabel}</p>
         )}
         <p className="text-white/80 mb-6">
-          at {formatTime(activity.startTime)}
+          at {formattedTime}
         </p>
 
         {/* Comments Input */}
@@ -66,7 +63,7 @@ export default function CommentInputActivity({ activity, config, onSave, onCance
           <textarea
             value={comments}
             onChange={(e) => setComments(e.target.value)}
-            placeholder={getPlaceholder()}
+            placeholder={placeholder}
             rows={5}
             className="w-full px-4 py-3 rounded-xl bg-white/90 dark:bg-gray-800/90 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none"
             autoFocus
@@ -91,3 +88,5 @@ export default function CommentInputActivity({ activity, config, onSave, onCance
     </div>
   )
 }
+
+export default memo(CommentInputActivity)

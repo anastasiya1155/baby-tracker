@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
+import { formatTime } from '../utils/formatting'
 
 interface ActiveActivityProps {
   activity: Activity
@@ -9,7 +10,7 @@ interface ActiveActivityProps {
   onUpdateStartTime: (startTime: number) => void
 }
 
-export default function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateStartTime }: ActiveActivityProps) {
+function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateStartTime }: ActiveActivityProps) {
   const [duration, setDuration] = useState(0)
   const [comments, setComments] = useState(activity.comments || '')
   const [isEditingTime, setIsEditingTime] = useState(false)
@@ -29,42 +30,38 @@ export default function ActiveActivity({ activity, config, onStop, onUpdateComme
     return () => clearInterval(timer)
   }, [activity.startTime])
 
-  const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
+  const formattedDuration = useMemo(() => {
+    const hours = Math.floor(duration / 3600)
+    const minutes = Math.floor((duration % 3600) / 60)
+    const secs = duration % 60
 
     if (hours > 0) {
       return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
     return `${minutes}:${secs.toString().padStart(2, '0')}`
-  }
+  }, [duration])
 
-  const formatStartTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    })
-  }
+  const formatStartTime = useCallback((timestamp: number) => {
+    return formatTime(new Date(timestamp))
+  }, [])
 
-  const handleCommentsChange = (value: string) => {
+  const handleCommentsChange = useCallback((value: string) => {
     setComments(value)
     onUpdateComments(value)
-  }
+  }, [onUpdateComments])
 
-  const handleStop = () => {
+  const handleStop = useCallback(() => {
     onStop(comments.trim() || undefined)
-  }
+  }, [onStop, comments])
 
-  const handleTimerClick = () => {
+  const handleTimerClick = useCallback(() => {
     const start = new Date(activity.startTime)
     setEditDate(start.toISOString().split('T')[0])
     setEditTime(start.toTimeString().slice(0, 5))
     setIsEditingTime(true)
-  }
+  }, [activity.startTime])
 
-  const handleSaveTime = () => {
+  const handleSaveTime = useCallback(() => {
     const newStartTime = new Date(`${editDate}T${editTime}`).getTime()
     if (newStartTime > Date.now()) {
       alert('Start time cannot be in the future')
@@ -72,25 +69,25 @@ export default function ActiveActivity({ activity, config, onStop, onUpdateComme
     }
     onUpdateStartTime(newStartTime)
     setIsEditingTime(false)
-  }
+  }, [editDate, editTime, onUpdateStartTime])
 
-  const handleCancelEditTime = () => {
+  const handleCancelEditTime = useCallback(() => {
     setIsEditingTime(false)
-  }
+  }, [])
 
-  const getSubcategoryLabel = () => {
+  const subcategoryLabel = useMemo(() => {
     if (!activity.subcategory) return null
     const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
     return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
-  }
+  }, [activity.subcategory, config.subcategories])
 
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8 animate-pulse-slow`}>
       <div className="text-center">
         <div className="text-6xl mb-4">{config.icon}</div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title} in Progress</h2>
-        {getSubcategoryLabel() && (
-          <p className="text-white/90 text-xl mb-2">{getSubcategoryLabel()}</p>
+        {subcategoryLabel && (
+          <p className="text-white/90 text-xl mb-2">{subcategoryLabel}</p>
         )}
 
         {/* Start Time - Clickable */}
@@ -140,7 +137,7 @@ export default function ActiveActivity({ activity, config, onStop, onUpdateComme
           onClick={handleTimerClick}
           className="text-6xl font-mono font-bold text-white mb-6 hover:scale-105 transition-transform cursor-pointer"
         >
-          {formatDuration(duration)}
+          {formattedDuration}
         </button>
 
         {/* Comments Input */}
@@ -164,3 +161,5 @@ export default function ActiveActivity({ activity, config, onStop, onUpdateComme
     </div>
   )
 }
+
+export default memo(ActiveActivity)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo, useCallback } from 'react'
 import { ActivityConfig, ActivitySubcategory } from '../types'
 
 interface ActivityButtonProps {
@@ -7,25 +7,25 @@ interface ActivityButtonProps {
   disabled?: boolean
 }
 
-export default function ActivityButton({ config, onClick, disabled }: ActivityButtonProps) {
+function ActivityButton({ config, onClick, disabled }: ActivityButtonProps) {
   const [showSubcategories, setShowSubcategories] = useState(false)
 
-  const handleMainClick = () => {
+  const handleMainClick = useCallback(() => {
     if (config.subcategories.length > 0) {
       setShowSubcategories(true)
     } else {
       onClick()
     }
-  }
+  }, [config.subcategories.length, onClick])
 
-  const handleSubcategoryClick = (subcategory: ActivitySubcategory) => {
+  const handleSubcategoryClick = useCallback((subcategory: ActivitySubcategory) => {
     onClick(subcategory)
     setShowSubcategories(false)
-  }
+  }, [onClick])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setShowSubcategories(false)
-  }
+  }, [])
 
   if (showSubcategories) {
     return (
@@ -71,3 +71,5 @@ export default function ActivityButton({ config, onClick, disabled }: ActivityBu
     </button>
   )
 }
+
+export default memo(ActivityButton)

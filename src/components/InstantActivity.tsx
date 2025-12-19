@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, memo, useCallback, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
+import { formatTime } from '../utils/formatting'
 
 interface InstantActivityProps {
   activity: Activity
@@ -8,37 +9,33 @@ interface InstantActivityProps {
   onCancel: () => void
 }
 
-export default function InstantActivity({ activity, config, onSave, onCancel }: InstantActivityProps) {
+function InstantActivity({ activity, config, onSave, onCancel }: InstantActivityProps) {
   const [comments, setComments] = useState('')
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onSave(comments.trim() || undefined)
-  }
+  }, [onSave, comments])
 
-  const getSubcategoryLabel = () => {
+  const subcategoryLabel = useMemo(() => {
     if (!activity.subcategory) return null
     const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
     return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
-  }
+  }, [activity.subcategory, config.subcategories])
 
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    })
-  }
+  const formattedTime = useMemo(() => {
+    return formatTime(new Date(activity.startTime))
+  }, [activity.startTime])
 
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8`}>
       <div className="text-center">
         <div className="text-6xl mb-4">{config.icon}</div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title}</h2>
-        {getSubcategoryLabel() && (
-          <p className="text-white/90 text-xl mb-2">{getSubcategoryLabel()}</p>
+        {subcategoryLabel && (
+          <p className="text-white/90 text-xl mb-2">{subcategoryLabel}</p>
         )}
         <p className="text-white/80 mb-6">
-          at {formatTime(activity.startTime)}
+          at {formattedTime}
         </p>
 
         {/* Comments Input */}
@@ -70,3 +67,5 @@ export default function InstantActivity({ activity, config, onSave, onCancel }: 
     </div>
   )
 }
+
+export default memo(InstantActivity)
