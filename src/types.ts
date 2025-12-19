@@ -30,7 +30,7 @@ export interface SubcategoryConfig {
 
 export interface ActivityConfig {
   type: ActivityType
-  icon: string
+  icon: string | React.ComponentType<{ className?: string }>
   title: string
   color: string
   subcategories: SubcategoryConfig[]

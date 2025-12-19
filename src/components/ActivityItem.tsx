@@ -38,7 +38,7 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
         const unit = getUnit(activity.subcategory)
         return `${activity.value} ${unit}`
       }
-      return 'Instant'
+      return ''
     }
 
     // For timer activities with a value (like pumping), show both duration and amount
@@ -55,12 +55,18 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
     onEdit?.(activity)
   }, [onEdit, activity])
 
+  const IconComponent = typeof config.icon === 'string' ? null : config.icon
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-4 flex-1">
-          <div className={`${config.color} w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0`}>
-            {config.icon}
+          <div className={`${config.color} w-12 h-12 rounded-lg flex items-center justify-center shrink-0`}>
+            {IconComponent ? (
+              <IconComponent className="w-6 h-6 text-white" />
+            ) : (
+              <span className="text-2xl">{config.icon}</span>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 dark:text-white">

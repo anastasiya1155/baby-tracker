@@ -5,12 +5,13 @@ import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion'
 import HomePage from './pages/HomePage'
 import ActivityPage from './pages/ActivityPage'
 import { ActivityConfig } from './types'
+import { FeedingIcon, PumpingIcon, DiaperIcon, SleepingIcon, PlayingIcon, HealthIcon, MeasurementsIcon } from './components/icons/ActivityIcons'
 
 function App() {
   const activityConfigs: ActivityConfig[] = useMemo(() => [
     {
       type: 'feeding',
-      icon: '🍼',
+      icon: FeedingIcon,
       title: 'Feeding',
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       inputType: 'timer',
@@ -22,8 +23,32 @@ function App() {
       ]
     },
     {
+      type: 'pumping',
+      icon: PumpingIcon,
+      title: 'Pumping',
+      color: 'bg-gradient-to-br from-pink-500 to-pink-600',
+      inputType: 'timer',
+      unit: 'ml',
+      subcategories: [
+        { value: 'left', label: 'Left', icon: '👈' },
+        { value: 'right', label: 'Right', icon: '👉' },
+        { value: 'both', label: 'Both', icon: '🤝' }
+      ]
+    },
+    {
+      type: 'diaper_change',
+      icon: DiaperIcon,
+      title: 'Diaper Change',
+      color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+      inputType: 'instant',
+      subcategories: [
+        { value: 'dirty', label: 'Dirty', icon: '💩' },
+        { value: 'wet', label: 'Wet', icon: '💧' }
+      ]
+    },
+    {
       type: 'sleeping',
-      icon: '😴',
+      icon: SleepingIcon,
       title: 'Sleeping',
       color: 'bg-gradient-to-br from-purple-500 to-purple-600',
       inputType: 'timer',
@@ -34,7 +59,7 @@ function App() {
     },
     {
       type: 'playing',
-      icon: '🎮',
+      icon: PlayingIcon,
       title: 'Playing',
       color: 'bg-gradient-to-br from-green-500 to-green-600',
       inputType: 'timer',
@@ -47,7 +72,7 @@ function App() {
     },
     {
       type: 'health',
-      icon: '💊',
+      icon: HealthIcon,
       title: 'Health',
       color: 'bg-gradient-to-br from-red-500 to-red-600',
       inputType: 'comment',
@@ -59,19 +84,8 @@ function App() {
       ]
     },
     {
-      type: 'diaper_change',
-      icon: '🚼',
-      title: 'Diaper Change',
-      color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
-      inputType: 'instant',
-      subcategories: [
-        { value: 'dirty', label: 'Dirty', icon: '💩' },
-        { value: 'wet', label: 'Wet', icon: '💧' }
-      ]
-    },
-    {
       type: 'measurements',
-      icon: '📊',
+      icon: MeasurementsIcon,
       title: 'Measurements',
       color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
       inputType: 'number',
@@ -79,19 +93,6 @@ function App() {
         { value: 'height', label: 'Height', icon: '📏' },
         { value: 'weight', label: 'Weight', icon: '⚖️' },
         { value: 'head', label: 'Head', icon: '📐' }
-      ]
-    },
-    {
-      type: 'pumping',
-      icon: '🍶',
-      title: 'Pumping',
-      color: 'bg-gradient-to-br from-pink-500 to-pink-600',
-      inputType: 'timer',
-      unit: 'ml',
-      subcategories: [
-        { value: 'left', label: 'Left', icon: '👈' },
-        { value: 'right', label: 'Right', icon: '👉' },
-        { value: 'both', label: 'Both', icon: '🤝' }
       ]
     }
   ], [])
