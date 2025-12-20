@@ -37,3 +37,14 @@ export interface ActivityConfig {
   inputType: InputType
   unit?: string
 }
+
+export type Gender = 'male' | 'female' | 'other' | ''
+
+export type Relationship = 'parent' | 'caregiver' | 'grandparent' | 'other' | ''
+
+export interface BabySettings {
+  babyName: string
+  dateOfBirth: string
+  gender: Gender
+  relationship: Relationship
+}
