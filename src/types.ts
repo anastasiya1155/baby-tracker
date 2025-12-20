@@ -48,3 +48,10 @@ export interface BabySettings {
   gender: Gender
   relationship: Relationship
 }
+
+export interface DayComment {
+  id: string
+  date: string // ISO date string (YYYY-MM-DD)
+  comment: string
+  createdAt: number
+}
