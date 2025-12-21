@@ -1,10 +1,12 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { DayComment, BabySettings } from '../types'
 
 const DAY_HEADERS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
 
 export function CalendarPage() {
+  const navigate = useNavigate()
   const [comments, setComments] = useLocalStorage<DayComment[]>('dayComments', [])
   const [settings] = useLocalStorage<BabySettings>('babySettings', {
     babyName: '',
@@ -171,6 +173,12 @@ export function CalendarPage() {
     setSelectedDate(null)
     setCommentText('')
   }, [])
+
+  const handleViewSummary = useCallback(() => {
+    if (selectedDate) {
+      navigate(`/summary?date=${selectedDate}`)
+    }
+  }, [selectedDate, navigate])
 
   // Memoize sorted comments
   const sortedComments = useMemo(() => {
@@ -377,19 +385,27 @@ export function CalendarPage() {
               className="w-full h-32 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
             />
 
-            <div className="flex space-x-3 mt-4">
+            <div className="flex flex-col space-y-3 mt-4">
               <button
-                onClick={handleSaveComment}
-                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                onClick={handleViewSummary}
+                className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
               >
-                Save
+                View Day Summary
               </button>
-              <button
-                onClick={handleCancelComment}
-                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-              >
-                Cancel
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleSaveComment}
+                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Save Comment
+                </button>
+                <button
+                  onClick={handleCancelComment}
+                  className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import ActivityPage from './pages/ActivityPage'
 import SettingsPage from './pages/SettingsPage'
 import { CalendarPage } from './pages/CalendarPage'
+import DaySummaryPage from './pages/DaySummaryPage'
 import FirstLaunchModal from './components/FirstLaunchModal'
 import { ActivityConfig, BabySettings } from './types'
 import { FeedingIcon, PumpingIcon, DiaperIcon, SleepingIcon, PlayingIcon, HealthIcon, MeasurementsIcon } from './components/icons/ActivityIcons'
@@ -209,6 +210,10 @@ function AppContent() {
             <Route
               path="/activity/:activityType"
               element={<ActivityPage activityConfigs={activityConfigs} />}
+            />
+            <Route
+              path="/summary"
+              element={<DaySummaryPage activityConfigs={activityConfigs} />}
             />
             <Route
               path="/calendar"
