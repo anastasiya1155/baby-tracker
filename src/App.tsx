@@ -9,7 +9,14 @@ import { CalendarPage } from './pages/CalendarPage'
 import DaySummaryPage from './pages/DaySummaryPage'
 import FirstLaunchModal from './components/FirstLaunchModal'
 import { ActivityConfig, BabySettings } from './types'
-import { FeedingIcon, PumpingIcon, DiaperIcon, SleepingIcon, PlayingIcon, HealthIcon, MeasurementsIcon } from './components/icons/ActivityIcons'
+import {
+  FeedingIcon, PumpingIcon, DiaperIcon, SleepingIcon, PlayingIcon, HealthIcon, MeasurementsIcon,
+  LeftHandIcon, RightHandIcon, BottleIcon, SpoonIcon, BothHandsIcon,
+  DirtyDiaperIcon, WetDiaperIcon, NapIcon, NightIcon,
+  TummyTimeIcon, OutdoorsIcon, BathIcon, GymIcon,
+  VaccinationIcon, MedicineIcon, SickIcon, TemperatureIcon,
+  HeightIcon, WeightIcon, HeadCircumferenceIcon, BabyIcon
+} from './components/icons/ActivityIcons'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
 function AppContent() {
@@ -42,10 +49,10 @@ function AppContent() {
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       inputType: 'timer',
       subcategories: [
-        { value: 'left_breast', label: 'Left Breast', icon: '👈' },
-        { value: 'right_breast', label: 'Right Breast', icon: '👉' },
-        { value: 'bottle', label: 'Bottle', icon: '🍼' },
-        { value: 'solids', label: 'Solids', icon: '🥄' }
+        { value: 'left_breast', label: 'Left Breast', icon: LeftHandIcon },
+        { value: 'right_breast', label: 'Right Breast', icon: RightHandIcon },
+        { value: 'bottle', label: 'Bottle', icon: BottleIcon },
+        { value: 'solids', label: 'Solids', icon: SpoonIcon }
       ]
     },
     {
@@ -56,9 +63,9 @@ function AppContent() {
       inputType: 'timer',
       unit: 'ml',
       subcategories: [
-        { value: 'left', label: 'Left', icon: '👈' },
-        { value: 'right', label: 'Right', icon: '👉' },
-        { value: 'both', label: 'Both', icon: '🤝' }
+        { value: 'left', label: 'Left', icon: LeftHandIcon },
+        { value: 'right', label: 'Right', icon: RightHandIcon },
+        { value: 'both', label: 'Both', icon: BothHandsIcon }
       ]
     },
     {
@@ -68,8 +75,8 @@ function AppContent() {
       color: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
       inputType: 'instant',
       subcategories: [
-        { value: 'dirty', label: 'Dirty', icon: '💩' },
-        { value: 'wet', label: 'Wet', icon: '💧' }
+        { value: 'dirty', label: 'Dirty', icon: DirtyDiaperIcon },
+        { value: 'wet', label: 'Wet', icon: WetDiaperIcon }
       ]
     },
     {
@@ -79,8 +86,8 @@ function AppContent() {
       color: 'bg-gradient-to-br from-purple-500 to-purple-600',
       inputType: 'timer',
       subcategories: [
-        { value: 'nap', label: 'Nap', icon: '💤' },
-        { value: 'night', label: 'Night', icon: '🌙' }
+        { value: 'nap', label: 'Nap', icon: NapIcon },
+        { value: 'night', label: 'Night', icon: NightIcon }
       ]
     },
     {
@@ -90,10 +97,10 @@ function AppContent() {
       color: 'bg-gradient-to-br from-green-500 to-green-600',
       inputType: 'timer',
       subcategories: [
-        { value: 'tummy_time', label: 'Tummy Time', icon: '🤸' },
-        { value: 'outdoors', label: 'Outdoors', icon: '🌳' },
-        { value: 'bath', label: 'Bath', icon: '🛁' },
-        { value: 'gym', label: 'Gym', icon: '🎪' }
+        { value: 'tummy_time', label: 'Tummy Time', icon: TummyTimeIcon },
+        { value: 'outdoors', label: 'Outdoors', icon: OutdoorsIcon },
+        { value: 'bath', label: 'Bath', icon: BathIcon },
+        { value: 'gym', label: 'Gym', icon: GymIcon }
       ]
     },
     {
@@ -103,10 +110,10 @@ function AppContent() {
       color: 'bg-gradient-to-br from-red-500 to-red-600',
       inputType: 'comment',
       subcategories: [
-        { value: 'vaccination', label: 'Vaccination', icon: '💉' },
-        { value: 'medicine', label: 'Medicine', icon: '💊' },
-        { value: 'sick', label: 'Sick', icon: '🤒' },
-        { value: 'temperature', label: 'Temperature', icon: '🌡️' }
+        { value: 'vaccination', label: 'Vaccination', icon: VaccinationIcon },
+        { value: 'medicine', label: 'Medicine', icon: MedicineIcon },
+        { value: 'sick', label: 'Sick', icon: SickIcon },
+        { value: 'temperature', label: 'Temperature', icon: TemperatureIcon }
       ]
     },
     {
@@ -116,9 +123,9 @@ function AppContent() {
       color: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
       inputType: 'number',
       subcategories: [
-        { value: 'height', label: 'Height', icon: '📏' },
-        { value: 'weight', label: 'Weight', icon: '⚖️' },
-        { value: 'head', label: 'Head', icon: '📐' }
+        { value: 'height', label: 'Height', icon: HeightIcon },
+        { value: 'weight', label: 'Weight', icon: WeightIcon },
+        { value: 'head', label: 'Head', icon: HeadCircumferenceIcon }
       ]
     }
   ], [])
@@ -148,7 +155,7 @@ function AppContent() {
           <header className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center">
-                <span className="text-2xl">👶</span>
+                <BabyIcon className="w-7 h-7 text-white" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">BabyTrack</h1>

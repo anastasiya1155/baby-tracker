@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { DayComment, BabySettings } from '../types'
+import { BirthdayIcon } from '../components/icons/ActivityIcons'
 
 const DAY_HEADERS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
 
@@ -340,7 +341,7 @@ export function CalendarPage() {
                 </div>
                 {age && age.days >= 0 && settings.dateOfBirth && (
                   <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    {age.days === 0 && '🎂 Birth'}
+                    {age.days === 0 && <span className="flex items-center gap-1"><BirthdayIcon className="w-3 h-3 inline" /> Birth</span>}
                     {age.days > 0 && age.days % 7 === 0 && age.weeks <= 16 && (
                       <div className="font-semibold text-pink-600 dark:text-pink-400">
                         {age.weeks}w
