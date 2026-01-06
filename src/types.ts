@@ -25,7 +25,7 @@ export interface Activity {
 export interface SubcategoryConfig {
   value: ActivitySubcategory
   label: string
-  icon?: string
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 export interface ActivityConfig {

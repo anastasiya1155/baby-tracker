@@ -74,8 +74,8 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <div className={`${config.color} w-12 h-12 rounded-lg flex items-center justify-center text-2xl`}>
-                {config.icon}
+              <div className={`${config.color} w-12 h-12 rounded-lg flex items-center justify-center`}>
+                {typeof config.icon === 'function' ? <config.icon className="w-7 h-7 text-white" /> : <span className="text-2xl">{config.icon}</span>}
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Edit {config.title}
@@ -105,13 +105,13 @@ function EditActivityModal({ activity, config, onSave, onClose }: EditActivityMo
                       key={sub.value}
                       type="button"
                       onClick={() => setSubcategory(sub.value)}
-                      className={`px-3 py-2 rounded-lg border-2 transition-all ${
+                      className={`px-3 py-2 rounded-lg border-2 transition-all flex items-center gap-2 ${
                         subcategory === sub.value
                           ? `${config.color} border-transparent text-white`
                           : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
                     >
-                      <span className="mr-1">{sub.icon}</span>
+                      {sub.icon && <sub.icon className="w-4 h-4" />}
                       <span className="text-sm">{sub.label}</span>
                     </button>
                   ))}

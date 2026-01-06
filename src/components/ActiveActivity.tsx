@@ -77,19 +77,24 @@ function ActiveActivity({ activity, config, onStop, onUpdateComments, onUpdateSt
     setIsEditingTime(false)
   }, [])
 
-  const subcategoryLabel = useMemo(() => {
+  const subcategoryInfo = useMemo(() => {
     if (!activity.subcategory) return null
     const subConfig = config.subcategories.find(s => s.value === activity.subcategory)
-    return subConfig ? `${subConfig.icon} ${subConfig.label}` : null
+    return subConfig ? { icon: subConfig.icon, label: subConfig.label } : null
   }, [activity.subcategory, config.subcategories])
 
   return (
     <div className={`${config.color} rounded-3xl p-8 shadow-xl mb-8 animate-pulse-slow`}>
       <div className="text-center">
-        <div className="text-6xl mb-4">{config.icon}</div>
+        <div className="flex justify-center mb-4">
+          {typeof config.icon === 'function' ? <config.icon className="w-16 h-16 text-white" /> : <span className="text-6xl">{config.icon}</span>}
+        </div>
         <h2 className="text-3xl font-bold text-white mb-2">{config.title} in Progress</h2>
-        {subcategoryLabel && (
-          <p className="text-white/90 text-xl mb-2">{subcategoryLabel}</p>
+        {subcategoryInfo && (
+          <p className="text-white/90 text-xl mb-2 flex items-center justify-center gap-2">
+            {subcategoryInfo.icon && <subcategoryInfo.icon className="w-5 h-5" />}
+            {subcategoryInfo.label}
+          </p>
         )}
 
         {/* Start Time - Clickable */}

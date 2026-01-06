@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { BabySettings, Gender, Relationship } from '../types'
+import { BabyIcon } from './icons/ActivityIcons'
 
 interface FirstLaunchModalProps {
   onComplete: (settings: BabySettings) => void
@@ -27,7 +28,7 @@ function FirstLaunchModal({ onComplete }: FirstLaunchModalProps) {
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl">👶</span>
+            <BabyIcon className="w-9 h-9 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Welcome to BabyTrack!

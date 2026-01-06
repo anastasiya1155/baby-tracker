@@ -182,7 +182,7 @@ function ActivityPage({ activityConfigs }: ActivityPageProps) {
           </button>
           <div className="flex items-center space-x-3">
             <div className={`w-12 h-12 ${config.color} rounded-xl flex items-center justify-center`}>
-              <span className="text-2xl">{config.icon}</span>
+              {typeof config.icon === 'function' ? <config.icon className="w-7 h-7 text-white" /> : <span className="text-2xl">{config.icon}</span>}
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{config.title}</h1>
           </div>
@@ -237,7 +237,9 @@ function ActivityPage({ activityConfigs }: ActivityPageProps) {
                   onClick={() => handleSubcategoryClick(sub.value)}
                   className={`${config.color} rounded-xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all`}
                 >
-                  <div className="text-4xl mb-2">{sub.icon}</div>
+                  <div className="flex justify-center mb-2">
+                    {sub.icon && <sub.icon className="w-10 h-10 text-white" />}
+                  </div>
                   <div className="text-lg font-medium text-white">{sub.label}</div>
                 </button>
               ))}
