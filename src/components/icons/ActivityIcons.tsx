@@ -5,13 +5,15 @@ interface IconProps {
 export function FeedingIcon({ className = "w-6 h-6" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 3v7a4 4 0 0 0 4 4v8" />
-      <ellipse cx="11" cy="6" rx="2" ry="3" />
-      <path d="M17 3v4" />
-      <path d="M17 7v11" />
-      <path d="M15 3l2-1 2 1" />
-      <path d="M15 5l2-1 2 1" />
-      <path d="M15 7h4" />
+      {/* Nipple */}
+      <path d="M10 2c0 0-1 1-1 2s1 2 1 2h4c0 0 1-1 1-2s-1-2-1-2" />
+      {/* Bottle cap/collar */}
+      <rect x="8" y="6" width="8" height="3" rx="1" />
+      {/* Bottle body */}
+      <path d="M8 9v11a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V9" />
+      {/* Measurement lines */}
+      <path d="M8 13h2" />
+      <path d="M8 17h3" />
     </svg>
   )
 }
