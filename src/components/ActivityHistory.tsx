@@ -42,6 +42,10 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
           const isToday = currentDateKey === todayKey
           const showDateSeparator = currentDateKey !== previousDateKey
 
+          const nextActivity = sortedActivities[index + 1]
+          const nextDateKey = nextActivity ? getDateKey(nextActivity.startTime) : null
+          const showConnector = nextDateKey === currentDateKey
+
           return (
             <div key={activity.id}>
               {showDateSeparator && (
@@ -57,6 +61,7 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
                 activity={activity}
                 config={config}
                 onEdit={onEditActivity}
+                showConnector={showConnector}
               />
             </div>
           )

@@ -6,9 +6,10 @@ interface ActivityItemProps {
   activity: Activity
   config: ActivityConfig
   onEdit?: (activity: Activity) => void
+  showConnector?: boolean
 }
 
-const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: ActivityItemProps) {
+const ActivityItem = memo(function ActivityItem({ activity, config, onEdit, showConnector = false }: ActivityItemProps) {
   const startTimeFormatted = useMemo(() =>
     formatTime(new Date(activity.startTime)),
     [activity.startTime]
@@ -57,11 +58,16 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
 
   return (
     <div className="flex items-center py-2 gap-3">
-      <div className={`${config.color} w-8 h-8 rounded-lg flex items-center justify-center shrink-0`}>
-        {IconComponent ? (
-          <IconComponent className="w-4 h-4 text-white" />
-        ) : (
-          <span className="text-lg">{config.icon}</span>
+      <div className="relative flex flex-col items-center">
+        <div className={`${config.color} w-8 h-8 rounded-lg flex items-center justify-center shrink-0 z-10`}>
+          {IconComponent ? (
+            <IconComponent className="w-4 h-4 text-white" />
+          ) : (
+            <span className="text-lg">{config.icon}</span>
+          )}
+        </div>
+        {showConnector && (
+          <div className="absolute top-8 w-px h-6 bg-gray-200 dark:bg-gray-700" />
         )}
       </div>
       <span className="text-sm text-gray-600 dark:text-gray-400">
