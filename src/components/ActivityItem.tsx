@@ -1,14 +1,15 @@
 import { memo, useMemo, useCallback } from 'react'
 import { Activity, ActivityConfig } from '../types'
-import { formatTime, formatDate, formatDuration, getSubcategoryLabel, getUnit } from '../utils/formatting'
+import { formatTime, formatDate, formatDuration, getSubcategoryLabel, getUnit, formatTimeSince } from '../utils/formatting'
 
 interface ActivityItemProps {
   activity: Activity
   config: ActivityConfig
   onEdit?: (activity: Activity) => void
+  timeSincePrevious?: number
 }
 
-const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: ActivityItemProps) {
+const ActivityItem = memo(function ActivityItem({ activity, config, onEdit, timeSincePrevious }: ActivityItemProps) {
   const subcategoryLabel = useMemo(() =>
     getSubcategoryLabel(activity.subcategory),
     [activity.subcategory]
@@ -55,6 +56,11 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
     onEdit?.(activity)
   }, [onEdit, activity])
 
+  const timeSinceFormatted = useMemo(() => {
+    if (timeSincePrevious === undefined) return null
+    return formatTimeSince(timeSincePrevious)
+  }, [timeSincePrevious])
+
   const IconComponent = typeof config.icon === 'string' ? null : config.icon
 
   return (
@@ -80,6 +86,11 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {startDate} at {startTimeFormatted}
             </p>
+            {timeSinceFormatted && (
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+                {timeSinceFormatted} since last {config.title.toLowerCase()}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-3">
