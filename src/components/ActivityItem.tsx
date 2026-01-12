@@ -1,6 +1,6 @@
 import { memo, useMemo, useCallback } from 'react'
 import { Activity, ActivityConfig } from '../types'
-import { formatTime, formatDuration, getSubcategoryLabel, getUnit } from '../utils/formatting'
+import { formatTime, formatDuration, getUnit } from '../utils/formatting'
 
 interface ActivityItemProps {
   activity: Activity
@@ -9,11 +9,6 @@ interface ActivityItemProps {
 }
 
 const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: ActivityItemProps) {
-  const subcategoryLabel = useMemo(() =>
-    getSubcategoryLabel(activity.subcategory),
-    [activity.subcategory]
-  )
-
   const startTimeFormatted = useMemo(() =>
     formatTime(new Date(activity.startTime)),
     [activity.startTime]
@@ -50,7 +45,15 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
     onEdit?.(activity)
   }, [onEdit, activity])
 
-  const IconComponent = typeof config.icon === 'string' ? null : config.icon
+  // Get subcategory icon if available, otherwise use main activity icon
+  const subcategoryConfig = useMemo(() => {
+    if (activity.subcategory) {
+      return config.subcategories.find(s => s.value === activity.subcategory)
+    }
+    return null
+  }, [activity.subcategory, config.subcategories])
+
+  const IconComponent = subcategoryConfig?.icon || (typeof config.icon === 'string' ? null : config.icon)
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
@@ -64,9 +67,6 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 dark:text-white">
-              {subcategoryLabel || config.title}
-            </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {activity.endTime && activity.startTime !== activity.endTime && endTimeFormatted
                 ? `${startTimeFormatted} - ${endTimeFormatted}`
