@@ -68,7 +68,9 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
               {subcategoryLabel || config.title}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {startTimeFormatted}
+              {activity.endTime && activity.startTime !== activity.endTime && endTimeFormatted
+                ? `${startTimeFormatted} - ${endTimeFormatted}`
+                : startTimeFormatted}
             </p>
           </div>
         </div>
@@ -77,11 +79,6 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
             <div className="font-semibold text-gray-900 dark:text-white">
               {duration}
             </div>
-            {activity.endTime && activity.startTime !== activity.endTime && endTimeFormatted && (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Ended {endTimeFormatted}
-              </p>
-            )}
           </div>
           {onEdit && (
             <button
