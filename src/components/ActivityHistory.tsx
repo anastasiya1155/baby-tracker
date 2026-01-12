@@ -77,6 +77,13 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
 
           return (
             <div key={activity.id} className="flex flex-col gap-3">
+              {timeSinceNow !== undefined && (
+                <div className="flex items-center -my-1.5 pl-2">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {formatTimeSince(timeSinceNow)}
+                  </span>
+                </div>
+              )}
               {showTimeSince && (
                 <div className="flex items-center -my-1.5 pl-2">
                   <span className="text-xs text-gray-400 dark:text-gray-500">
@@ -89,13 +96,6 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
                 config={config}
                 onEdit={onEditActivity}
               />
-              {timeSinceNow !== undefined && (
-                <div className="flex items-center -mt-1.5 pl-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {formatTimeSince(timeSinceNow)}
-                  </span>
-                </div>
-              )}
             </div>
           )
         })}
