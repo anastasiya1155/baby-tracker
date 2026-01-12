@@ -34,7 +34,8 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
 
           const currentDateKey = getDateKey(activity.startTime)
           const previousDateKey = index > 0 ? getDateKey(activities[index - 1].startTime) : null
-          const showDateSeparator = currentDateKey !== todayKey && currentDateKey !== previousDateKey
+          const isToday = currentDateKey === todayKey
+          const showDateSeparator = currentDateKey !== previousDateKey
 
           return (
             <div key={activity.id}>
@@ -42,7 +43,7 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
                 <div className="flex items-center gap-3 py-2 mt-2 first:mt-0">
                   <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                   <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {formatDateSeparator(new Date(activity.startTime))}
+                    {isToday ? 'Today' : formatDateSeparator(new Date(activity.startTime))}
                   </span>
                   <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                 </div>
