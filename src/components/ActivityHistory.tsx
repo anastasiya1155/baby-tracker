@@ -57,7 +57,7 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
           return (
             <div key={activity.id} className="flex flex-col gap-3">
               {showTimeSince && (
-                <div className="flex items-center -my-1.5">
+                <div className="flex items-center -my-1.5 pl-2">
                   <span className="text-xs text-gray-400 dark:text-gray-500">
                     {formatTimeSince(timeSince)}
                   </span>
