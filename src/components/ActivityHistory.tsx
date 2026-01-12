@@ -46,17 +46,18 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
         Recent Activities
       </h2>
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         {activities.map((activity, index) => {
           const config = configMap.get(activity.type)
           if (!config) return null
 
           const timeSince = timeSinceLastMap.get(activity.id)
+          const showTimeSince = index > 0 && timeSince !== undefined
 
           return (
-            <div key={activity.id}>
-              {index > 0 && timeSince !== undefined && (
-                <div className="flex items-center py-2">
+            <div key={activity.id} className="flex flex-col gap-3">
+              {showTimeSince && (
+                <div className="flex items-center -my-1.5">
                   <span className="text-xs text-gray-400 dark:text-gray-500">
                     {formatTimeSince(timeSince)}
                   </span>
