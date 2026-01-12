@@ -7,9 +7,10 @@ interface ActivityItemProps {
   config: ActivityConfig
   onEdit?: (activity: Activity) => void
   showConnector?: boolean
+  timeBetween?: string | null
 }
 
-const ActivityItem = memo(function ActivityItem({ activity, config, onEdit, showConnector = false }: ActivityItemProps) {
+const ActivityItem = memo(function ActivityItem({ activity, config, onEdit, showConnector = false, timeBetween }: ActivityItemProps) {
   const startTimeFormatted = useMemo(() =>
     formatTime(new Date(activity.startTime)),
     [activity.startTime]
@@ -67,7 +68,13 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit, show
           )}
         </div>
         {showConnector && (
-          <div className="absolute top-8 w-px h-6 bg-gray-200 dark:bg-gray-700" />
+          <div className="absolute top-8 w-px h-6 bg-gray-200 dark:bg-gray-700">
+            {timeBetween && (
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                {timeBetween}
+              </span>
+            )}
+          </div>
         )}
       </div>
       <span className="text-sm text-gray-600 dark:text-gray-400">

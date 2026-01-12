@@ -53,6 +53,17 @@ export function getDateKey(timestamp: number): string {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
 
+export function formatTimeBetween(timestamp1: number, timestamp2: number): string {
+  const diff = Math.abs(timestamp1 - timestamp2)
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`
+  }
+  return `${minutes}m`
+}
+
 export function formatDuration(startTime: Date, endTime: Date): string {
   const duration = endTime.getTime() - startTime.getTime()
   const hours = Math.floor(duration / (1000 * 60 * 60))

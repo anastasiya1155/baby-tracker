@@ -1,15 +1,16 @@
 import { memo, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
 import ActivityItem from './ActivityItem'
-import { formatDateSeparator, getDateKey } from '../utils/formatting'
+import { formatDateSeparator, getDateKey, formatTimeBetween } from '../utils/formatting'
 
 interface ActivityHistoryProps {
   activities: Activity[]
   configs: ActivityConfig[]
   onEditActivity?: (activity: Activity) => void
+  showTimeBetween?: boolean
 }
 
-function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistoryProps) {
+function ActivityHistory({ activities, configs, onEditActivity, showTimeBetween = false }: ActivityHistoryProps) {
   const configMap = useMemo(() => {
     const map = new Map<string, ActivityConfig>()
     configs.forEach(config => map.set(config.type, config))
@@ -46,6 +47,11 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
           const nextDateKey = nextActivity ? getDateKey(nextActivity.startTime) : null
           const showConnector = nextDateKey === currentDateKey
 
+          // Calculate time between this activity and the next one
+          const timeBetween = showTimeBetween && nextActivity && showConnector
+            ? formatTimeBetween(activity.startTime, nextActivity.startTime)
+            : null
+
           return (
             <div key={activity.id}>
               {showDateSeparator && (
@@ -62,6 +68,7 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
                 config={config}
                 onEdit={onEditActivity}
                 showConnector={showConnector}
+                timeBetween={timeBetween}
               />
             </div>
           )
