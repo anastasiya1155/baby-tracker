@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react'
 import { Activity, ActivityConfig, ActivityType } from '../types'
 import ActivityItem from './ActivityItem'
+import { formatTimeSince } from '../utils/formatting'
 
 interface ActivityHistoryProps {
   activities: Activity[]
@@ -46,18 +47,27 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
         Recent Activities
       </h2>
       <div className="space-y-3">
-        {activities.map(activity => {
+        {activities.map((activity, index) => {
           const config = configMap.get(activity.type)
           if (!config) return null
 
+          const timeSince = timeSinceLastMap.get(activity.id)
+
           return (
-            <ActivityItem
-              key={activity.id}
-              activity={activity}
-              config={config}
-              onEdit={onEditActivity}
-              timeSincePrevious={timeSinceLastMap.get(activity.id)}
-            />
+            <div key={activity.id}>
+              {index > 0 && timeSince !== undefined && (
+                <div className="flex items-center justify-center py-1 -mt-1 -mb-1">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {formatTimeSince(timeSince)}
+                  </span>
+                </div>
+              )}
+              <ActivityItem
+                activity={activity}
+                config={config}
+                onEdit={onEditActivity}
+              />
+            </div>
           )
         })}
       </div>
