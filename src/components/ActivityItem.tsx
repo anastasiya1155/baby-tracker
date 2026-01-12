@@ -1,6 +1,6 @@
 import { memo, useMemo, useCallback } from 'react'
 import { Activity, ActivityConfig } from '../types'
-import { formatTime, formatDate, formatDuration, getSubcategoryLabel, getUnit } from '../utils/formatting'
+import { formatTime, formatDuration, getSubcategoryLabel, getUnit } from '../utils/formatting'
 
 interface ActivityItemProps {
   activity: Activity
@@ -12,11 +12,6 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
   const subcategoryLabel = useMemo(() =>
     getSubcategoryLabel(activity.subcategory),
     [activity.subcategory]
-  )
-
-  const startDate = useMemo(() =>
-    formatDate(new Date(activity.startTime)),
-    [activity.startTime]
   )
 
   const startTimeFormatted = useMemo(() =>
@@ -78,7 +73,7 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
               )}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {startDate} at {startTimeFormatted}
+              {startTimeFormatted}
             </p>
           </div>
         </div>
