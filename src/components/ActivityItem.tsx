@@ -65,12 +65,7 @@ const ActivityItem = memo(function ActivityItem({ activity, config, onEdit }: Ac
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              {config.title}
-              {subcategoryLabel && (
-                <span className="ml-2 text-sm font-normal">
-                  {subcategoryLabel}
-                </span>
-              )}
+              {subcategoryLabel || config.title}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {startTimeFormatted}
