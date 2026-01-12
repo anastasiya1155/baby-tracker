@@ -16,6 +16,11 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
     return map
   }, [configs])
 
+  const sortedActivities = useMemo(() =>
+    [...activities].sort((a, b) => b.startTime - a.startTime),
+    [activities]
+  )
+
   const todayKey = useMemo(() => getDateKey(Date.now()), [])
 
   if (activities.length === 0) {
@@ -28,12 +33,12 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
         Recent Activities
       </h2>
       <div className="space-y-3">
-        {activities.map((activity, index) => {
+        {sortedActivities.map((activity, index) => {
           const config = configMap.get(activity.type)
           if (!config) return null
 
           const currentDateKey = getDateKey(activity.startTime)
-          const previousDateKey = index > 0 ? getDateKey(activities[index - 1].startTime) : null
+          const previousDateKey = index > 0 ? getDateKey(sortedActivities[index - 1].startTime) : null
           const isToday = currentDateKey === todayKey
           const showDateSeparator = currentDateKey !== previousDateKey
 
