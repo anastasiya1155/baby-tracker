@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react'
 import { Activity, ActivityConfig } from '../types'
 import ActivityItem from './ActivityItem'
+import { formatDateSeparator, getDateKey } from '../utils/formatting'
 
 interface ActivityHistoryProps {
   activities: Activity[]
@@ -15,6 +16,8 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
     return map
   }, [configs])
 
+  const todayKey = useMemo(() => getDateKey(Date.now()), [])
+
   if (activities.length === 0) {
     return null
   }
@@ -25,17 +28,31 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
         Recent Activities
       </h2>
       <div className="space-y-3">
-        {activities.map(activity => {
+        {activities.map((activity, index) => {
           const config = configMap.get(activity.type)
           if (!config) return null
 
+          const currentDateKey = getDateKey(activity.startTime)
+          const previousDateKey = index > 0 ? getDateKey(activities[index - 1].startTime) : null
+          const showDateSeparator = currentDateKey !== todayKey && currentDateKey !== previousDateKey
+
           return (
-            <ActivityItem
-              key={activity.id}
-              activity={activity}
-              config={config}
-              onEdit={onEditActivity}
-            />
+            <div key={activity.id}>
+              {showDateSeparator && (
+                <div className="flex items-center gap-3 py-2 mt-2 first:mt-0">
+                  <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {formatDateSeparator(new Date(activity.startTime))}
+                  </span>
+                  <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                </div>
+              )}
+              <ActivityItem
+                activity={activity}
+                config={config}
+                onEdit={onEditActivity}
+              />
+            </div>
           )
         })}
       </div>

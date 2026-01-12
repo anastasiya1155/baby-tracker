@@ -28,6 +28,30 @@ export function formatDate(date: Date): string {
   })
 }
 
+export function formatDateSeparator(date: Date): string {
+  const now = new Date()
+  const activityDate = new Date(date)
+
+  // Reset time parts for comparison
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const compareDate = new Date(activityDate.getFullYear(), activityDate.getMonth(), activityDate.getDate())
+
+  const diffTime = today.getTime() - compareDate.getTime()
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 1) return 'Yesterday'
+
+  return activityDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
+export function getDateKey(timestamp: number): string {
+  const date = new Date(timestamp)
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
 export function formatDuration(startTime: Date, endTime: Date): string {
   const duration = endTime.getTime() - startTime.getTime()
   const hours = Math.floor(duration / (1000 * 60 * 60))
