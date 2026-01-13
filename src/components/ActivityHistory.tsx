@@ -1,7 +1,7 @@
-import { memo, useMemo } from 'react'
-import { Activity, ActivityConfig } from '../types'
+import { memo, useMemo, useState, useEffect } from 'react'
+import { Activity, ActivityConfig, ActivityType } from '../types'
 import ActivityItem from './ActivityItem'
-import { formatDateSeparator, getDateKey, formatTimeBetween } from '../utils/formatting'
+import { formatDateSeparator, getDateKey, formatTimeBetween, formatTimeSince } from '../utils/formatting'
 
 interface ActivityHistoryProps {
   activities: Activity[]
@@ -11,6 +11,13 @@ interface ActivityHistoryProps {
 }
 
 function ActivityHistory({ activities, configs, onEditActivity, showTimeBetween = false }: ActivityHistoryProps) {
+  const [now, setNow] = useState(Date.now())
+
+  // Update current time when component mounts or activities change
+  useEffect(() => {
+    setNow(Date.now())
+  }, [activities])
+
   const configMap = useMemo(() => {
     const map = new Map<string, ActivityConfig>()
     configs.forEach(config => map.set(config.type, config))
@@ -23,6 +30,39 @@ function ActivityHistory({ activities, configs, onEditActivity, showTimeBetween 
   )
 
   const todayKey = useMemo(() => getDateKey(Date.now()), [])
+  // Calculate time since previous activity of the same type for each activity
+  // Activities are sorted by startTime descending (most recent first)
+  // Also track the most recent activity of each type to show time since now
+  const { timeSinceLastMap, timeSinceNowMap } = useMemo(() => {
+    const timeSinceLastMap = new Map<string, number>()
+    const timeSinceNowMap = new Map<string, number>()
+    const lastSeenByType = new Map<ActivityType, number>()
+    const mostRecentByType = new Map<ActivityType, string>()
+
+    // Iterate through activities (most recent first)
+    for (const activity of activities) {
+      const previousTime = lastSeenByType.get(activity.type)
+      if (previousTime !== undefined) {
+        // Time since this activity until the next one of the same type (which we saw first)
+        const timeSince = previousTime - activity.startTime
+        timeSinceLastMap.set(activity.id, timeSince)
+      } else {
+        // This is the most recent activity of this type
+        mostRecentByType.set(activity.type, activity.id)
+      }
+      // Update the last seen time for this type
+      lastSeenByType.set(activity.type, activity.startTime)
+    }
+
+    // Calculate time since now for the most recent activity of each type
+    for (const activity of activities) {
+      if (mostRecentByType.get(activity.type) === activity.id) {
+        timeSinceNowMap.set(activity.id, now - activity.startTime)
+      }
+    }
+
+    return { timeSinceLastMap, timeSinceNowMap }
+  }, [activities, now])
 
   if (activities.length === 0) {
     return null

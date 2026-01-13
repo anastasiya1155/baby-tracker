@@ -136,3 +136,32 @@ export function getUnit(subcategory?: ActivitySubcategory): string {
 
   return units[subcategory] || ''
 }
+
+export function formatTimeSince(milliseconds: number): string {
+  const totalSeconds = Math.floor(milliseconds / 1000)
+  const totalMinutes = Math.floor(totalSeconds / 60)
+  const totalHours = Math.floor(totalMinutes / 60)
+  const days = Math.floor(totalHours / 24)
+
+  if (days > 0) {
+    const remainingHours = totalHours % 24
+    if (remainingHours > 0) {
+      return `${days} d ${remainingHours} h`
+    }
+    return `${days} d`
+  }
+
+  if (totalHours > 0) {
+    const remainingMinutes = totalMinutes % 60
+    if (remainingMinutes > 0) {
+      return `${totalHours} h ${remainingMinutes} m`
+    }
+    return `${totalHours} h`
+  }
+
+  if (totalMinutes > 0) {
+    return `${totalMinutes} m`
+  }
+
+  return `${totalSeconds} s`
+}
