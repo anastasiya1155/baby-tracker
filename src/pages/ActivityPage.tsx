@@ -252,6 +252,7 @@ function ActivityPage({ activityConfigs }: ActivityPageProps) {
           activities={filteredActivities}
           configs={activityConfigs}
           onEditActivity={handleEditActivity}
+          showTimeBetween
         />
       </div>
 

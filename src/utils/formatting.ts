@@ -1,9 +1,10 @@
 import { ActivitySubcategory } from '../types'
 
 export function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   })
 }
 
@@ -26,6 +27,41 @@ export function formatDate(date: Date): string {
     month: 'short',
     day: 'numeric',
   })
+}
+
+export function formatDateSeparator(date: Date): string {
+  const now = new Date()
+  const activityDate = new Date(date)
+
+  // Reset time parts for comparison
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const compareDate = new Date(activityDate.getFullYear(), activityDate.getMonth(), activityDate.getDate())
+
+  const diffTime = today.getTime() - compareDate.getTime()
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 1) return 'Yesterday'
+
+  return activityDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
+export function getDateKey(timestamp: number): string {
+  const date = new Date(timestamp)
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+export function formatTimeBetween(timestamp1: number, timestamp2: number): string {
+  const diff = Math.abs(timestamp1 - timestamp2)
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`
+  }
+  return `${minutes}m`
 }
 
 export function formatDuration(startTime: Date, endTime: Date): string {

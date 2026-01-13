@@ -1,15 +1,16 @@
 import { memo, useMemo, useState, useEffect } from 'react'
 import { Activity, ActivityConfig, ActivityType } from '../types'
 import ActivityItem from './ActivityItem'
-import { formatTimeSince } from '../utils/formatting'
+import { formatDateSeparator, getDateKey, formatTimeBetween, formatTimeSince } from '../utils/formatting'
 
 interface ActivityHistoryProps {
   activities: Activity[]
   configs: ActivityConfig[]
   onEditActivity?: (activity: Activity) => void
+  showTimeBetween?: boolean
 }
 
-function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistoryProps) {
+function ActivityHistory({ activities, configs, onEditActivity, showTimeBetween = false }: ActivityHistoryProps) {
   const [now, setNow] = useState(Date.now())
 
   // Update current time when component mounts or activities change
@@ -23,6 +24,12 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
     return map
   }, [configs])
 
+  const sortedActivities = useMemo(() =>
+    [...activities].sort((a, b) => b.startTime - a.startTime),
+    [activities]
+  )
+
+  const todayKey = useMemo(() => getDateKey(Date.now()), [])
   // Calculate time since previous activity of the same type for each activity
   // Activities are sorted by startTime descending (most recent first)
   // Also track the most recent activity of each type to show time since now
@@ -66,35 +73,42 @@ function ActivityHistory({ activities, configs, onEditActivity }: ActivityHistor
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
         Recent Activities
       </h2>
-      <div className="flex flex-col gap-3">
-        {activities.map((activity, index) => {
+      <div className="space-y-3">
+        {sortedActivities.map((activity, index) => {
           const config = configMap.get(activity.type)
           if (!config) return null
 
-          const timeSince = timeSinceLastMap.get(activity.id)
-          const timeSinceNow = timeSinceNowMap.get(activity.id)
-          const showTimeSince = index > 0 && timeSince !== undefined
+          const currentDateKey = getDateKey(activity.startTime)
+          const previousDateKey = index > 0 ? getDateKey(sortedActivities[index - 1].startTime) : null
+          const isToday = currentDateKey === todayKey
+          const showDateSeparator = currentDateKey !== previousDateKey
+
+          const nextActivity = sortedActivities[index + 1]
+          const nextDateKey = nextActivity ? getDateKey(nextActivity.startTime) : null
+          const showConnector = nextDateKey === currentDateKey
+
+          // Calculate time between this activity and the next one
+          const timeBetween = showTimeBetween && nextActivity && showConnector
+            ? formatTimeBetween(activity.startTime, nextActivity.startTime)
+            : null
 
           return (
-            <div key={activity.id} className="flex flex-col gap-3">
-              {timeSinceNow !== undefined && (
-                <div className="flex items-center -my-1.5 pl-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {formatTimeSince(timeSinceNow)}
+            <div key={activity.id}>
+              {showDateSeparator && (
+                <div className="flex items-center gap-3 py-2 mt-2 first:mt-0">
+                  <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {isToday ? 'Today' : formatDateSeparator(new Date(activity.startTime))}
                   </span>
-                </div>
-              )}
-              {showTimeSince && (
-                <div className="flex items-center -my-1.5 pl-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {formatTimeSince(timeSince)}
-                  </span>
+                  <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                 </div>
               )}
               <ActivityItem
                 activity={activity}
                 config={config}
                 onEdit={onEditActivity}
+                showConnector={showConnector}
+                timeBetween={timeBetween}
               />
             </div>
           )
