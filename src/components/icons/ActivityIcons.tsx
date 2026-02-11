@@ -5,15 +5,13 @@ interface IconProps {
 export function FeedingIcon({ className = "w-6 h-6" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {/* Nipple */}
-      <path d="M10 2c0 0-1 1-1 2s1 2 1 2h4c0 0 1-1 1-2s-1-2-1-2" />
-      {/* Bottle cap/collar */}
-      <rect x="8" y="6" width="8" height="3" rx="1" />
-      {/* Bottle body */}
-      <path d="M8 9v11a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V9" />
-      {/* Measurement lines */}
-      <path d="M8 13h2" />
-      <path d="M8 17h3" />
+      <path d="M9 2h6" />
+      <rect x="9" y="2.5" width="6" height="2.5" rx="1.25" />
+      <rect x="8" y="5" width="8" height="3.5" rx="1.5" />
+      <path d="M8 8.5v11a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3v-11" />
+      <path d="M10 12h4" />
+      <path d="M10 16h4" />
+      <path d="M16.5 13.5c1.7 2 1.7 3.8 0 5-1.2.8-2.8.2-2.8-1.1 0-1.5 1.6-2.9 2.8-3.9Z" />
     </svg>
   )
 }
@@ -109,11 +107,11 @@ export function RightHandIcon({ className = "w-6 h-6" }: IconProps) {
 export function BottleIcon({ className = "w-6 h-6" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 2v2.343" />
-      <path d="M14 2v2.343" />
-      <path d="M8 4h8a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
-      <path d="M8 9h8v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9z" />
-      <path d="M8 13h8" />
+      <rect x="9" y="2" width="6" height="3" rx="1.25" />
+      <rect x="8" y="5" width="8" height="3.5" rx="1.5" />
+      <path d="M8 8.5v11a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3v-11" />
+      <path d="M10 12h4" />
+      <path d="M10 16h4" />
     </svg>
   )
 }
@@ -122,8 +120,9 @@ export function BottleIcon({ className = "w-6 h-6" }: IconProps) {
 export function SpoonIcon({ className = "w-6 h-6" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22" />
-      <path d="M8 6a4 4 0 0 1 8 0" />
+      <path d="M8 6a4 4 0 0 1 8 0c0 2.4-1.6 4.3-4 4.3S8 8.4 8 6Z" />
+      <path d="M12 10.3V22" />
+      <path d="M6 19h12" />
     </svg>
   )
 }
