@@ -1,50 +1,45 @@
-# React + TypeScript + Vite
+# BabyTrack
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Progressive Web App for parents and caregivers to track a baby's daily activities in real-time. Log feedings, sleep, diaper changes, playtime, health events, pumping sessions, and measurements with an intuitive mobile-first interface.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Activity Tracking** — seven categories with detailed subcategories:
+  - Feeding (breast left/right, bottle, solids) with timer-based duration
+  - Pumping (left/right/both) measured in milliliters
+  - Diaper changes (dirty/wet) with instant logging
+  - Sleeping (naps/night) with timer-based duration
+  - Playing (tummy time, outdoors, bath, gym) with timer
+  - Health (vaccination, medicine, sick, temperature) with comments
+  - Measurements (height, weight, head circumference)
+- **Daily Summaries** — aggregated stats for feeding duration, pumping amount, sleep duration, and activity counts
+- **Calendar View** — monthly calendar with day-specific comments and age calculation from birth date
+- **Dark Mode** — system-preference aware with manual toggle
+- **Offline Support** — installable PWA with service worker caching
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Vite PWA Plugin + Workbox
+- LocalStorage for data persistence
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Scripts
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+| Command           | Description                |
+| ----------------- | -------------------------- |
+| `npm run dev`     | Start development server   |
+| `npm run build`   | Type-check and build       |
+| `npm run preview` | Preview production build   |
+| `npm run lint`    | Run ESLint                 |
